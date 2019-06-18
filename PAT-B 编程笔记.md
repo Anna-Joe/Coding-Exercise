@@ -127,7 +127,7 @@ bool cmp(struct stu a,struct stu b)
 2.取E后面的数字，包括符号，即10的指数，也就是这个数的小数点移动位数index；   
 3.分E后指数大于零和小于零的情况，决定了小数点是向左移动还是向右移动；   
 4.小数点向左移动，先输出“0.”，再按移动位数index-1次输出0，最后输出num中的数字（除去“.”）；   
-小数点向右移动，先输出num的第一位，然后从num[2]开始循环输出（循环条件是不超过num的长度，移动位数小于index），使用count记录已输出的位数，如果count小于index：输出0，把剩余位数补齐；如果count大于index输出小数点，并输出剩下的num。
+小数点向右移动，先输出num的第一位，然后从num[2]开始循环输出（循环条件是不超过num的长度，移动位数小于index），使用count记录已输出的位数，如果count小于index：输出0，把剩余位数补齐；如果count大于index输出小数点，并输出剩下的num。   
 **要点：s.substr(begin,end)取子串，stoi()字符串转整型**
 
 ```C++
@@ -173,13 +173,30 @@ int main()
 ```
 
 ### 1025 反转链表
+**algorithm头文件里的reverse函数可以直接调用，反转指定数组**
 ```C++
-#include <algorithm>
 #include <iostream>
+#include <algorithm>
 using namespace std;
-
-int main()
-{
-int first
+int main() {
+    int first, k, n, temp;
+    cin >> first >> n >> k;
+    int data[100005], next[100005], list[100005];
+    for (int i = 0; i < n; i++) {
+        cin >> temp;
+        cin >> data[temp] >> next[temp];
+    }
+    int sum = 0;//不一定所有的输入的结点都是有用的，加个计数器
+    while (first != -1) {
+        list[sum++] = first;
+        first = next[first];
+    }
+    for (int i = 0; i < (sum - sum % k); i += k)
+        reverse(begin(list) + i, begin(list) + i + k);
+    for (int i = 0; i < sum - 1; i++)
+        printf("%05d %d %05d\n", list[i], data[list[i]], list[i + 1]);
+    printf("%05d %d -1", list[sum - 1], data[list[sum - 1]]);
+    return 0;
+}
 
 ```
