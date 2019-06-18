@@ -30,7 +30,7 @@
 m['A'] == 1 && m['A'] != 0 && m['T'] == 1  //只能有一个P和一个T并且必须有A
 m.size() == 3 //m映射的大小为3，即只有PAT三种字符
 t - p != 1 && p * (t - p - 1) == s.length() - t - 1 //首A*中间A=尾A
-//p是'P‘的位置，就是首A，t是'T'的位置，表示到'T'为止字符的个数，(t - p - 1)是中间A，
+//p是'P'的位置，就是首A，t是'T'的位置，表示到'T'为止字符的个数，(t - p - 1)是中间A，
 ```
 
 
@@ -120,3 +120,66 @@ bool cmp(struct stu a,struct stu b)
 }
 ```
 
+### 1024 科学计数法
+将一个形如“+1.23E-3”的数字写成完整的数字“0.00123”。   
+解题思路：   
+1.取E前面的数字，不包括符号的部分，即这个数num；   
+2.取E后面的数字，包括符号，即10的指数，也就是这个数的小数点移动位数index；   
+3.分E后指数大于零和小于零的情况，决定了小数点是向左移动还是向右移动；   
+4.小数点向左移动，先输出“0.”，再按移动位数index-1次输出0，最后输出num中的数字（除去“.”）；   
+小数点向右移动，先输出num的第一位，然后从num[2]开始循环输出（循环条件是不超过num的长度，移动位数小于index），使用count记录已输出的位数，如果count小于index：输出0，把剩余位数补齐；如果count大于index输出小数点，并输出剩下的num。
+**要点：s.substr(begin,end)取子串，stoi()字符串转整型**
+
+```C++
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+    string scn,num;
+    cin >> scn;
+    int index,i = 0,count;
+    while(scn[i] != 'E')i++;
+    num = scn.substr(1,i-1);
+    index = stoi(scn.substr(i+1));
+    if(scn[0] == '-')cout << '-';
+    if(index < 0)
+    {
+        cout << "0.";
+        for(i = 0; i < abs(index) - 1; i++)
+            cout << 0;
+        for(i = 0; i < num.length(); i++)
+            if(num[i] != '.')cout << num[i];
+    }
+    else
+    {
+        cout << num[0];
+        for(i = 2, count = 0; i < num.length() && count < index; i++, count++)
+            cout << num[i];
+        if(i == num.length())
+            for(int j = 0; j < index - count; j++)
+                cout << 0;
+        else
+        {
+            cout << '.';
+            for(int j = i; j < num.length(); j++)
+                cout << num[j];
+        }
+    }
+    
+    return 0;
+}             
+```
+
+### 1025 反转链表
+```C++
+#include <algorithm>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+int first
+
+```
