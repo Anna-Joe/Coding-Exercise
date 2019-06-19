@@ -89,6 +89,12 @@ bool cmp(struct stu a,struct stu b)
 }
 ```
 
+### 1021 个位数统计
+给定一个k位整数N = dk-1*10k-1 + … + d1*101 + d0 (0<=di<=9, i=0,…,k-1, dk-1>0)，请编写程序统计每种不同的个位数字出现的次数。例如：
+给定N = 100311，则有2个0，3个1，和1个3。
+**要点笔记：使用map<char,int>做结果的存储结构，map中能自动按照key值升序排序。**
+
+
 ### 1024 科学计数法
 将一个形如“+1.23E-3”的数字写成完整的数字“0.00123”。   
 解题思路：   
@@ -151,7 +157,7 @@ int main() {
     int first, k, n, temp;
     cin >> first >> n >> k;
     int data[100005], next[100005], list[100005];
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {//将先输入的地址做为data和next数组的下标
         cin >> temp;
         cin >> data[temp] >> next[temp];
     }
