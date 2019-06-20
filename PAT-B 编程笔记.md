@@ -288,3 +288,28 @@ int main()
 }
 ```
 
+### 1032 旧键盘打字
+**通过跳过不合条件的，直接输出字符串的方式**
+```C++
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main()
+{
+	string badkey,content;
+	getline(cin,badkey);
+    getline(cin,content);//如果没有字符输出，要输出空行，getline能得到空格
+	int i,j;
+	
+	for(i = 0; i < content.length(); i ++)
+	{
+		if(badkey.find(toupper(content[i])) != badkey.npos) continue;
+		if(isupper(content[i]) && badkey.find('+') != badkey.npos) continue;
+		cout << content[i];
+	}
+	
+	return 0;
+}
+```
