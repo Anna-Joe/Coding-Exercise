@@ -243,6 +243,48 @@ int main()
 	cout << count;
 	return 0;
 
+}//有一个测试用例不通过
+```
+
+```C++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main()
+{
+	int N,i,j,x;
+	long long p;
+	vector<int> n;
+	cin >> N >> p;
+
+	for(i = 0;i < N; i++)
+	{
+		cin >> x;
+		n.push_back(x);
+	}
+
+	sort(n.begin(),n.end());
+
+	int result = 0,temp = 0;
+	for(i = 0; i < N; i ++)
+	{
+		for(j = i + result; j < N; j++)
+		{
+			if(n[j] <= n[i] * p)
+			{
+				temp = j - i + 1;
+				if(temp > result)
+					result = temp;
+			}
+			else
+				break;
+		}
+	}
+	cout << result;
+
+	return 0;
 }
 ```
-> 只有一个测试用例不能通过，不知道这个算法有什么问题
+
