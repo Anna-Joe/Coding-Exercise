@@ -750,7 +750,6 @@ int main() {
 5/12 7/12
 ```
 ```c++
-//一个测试用例不通过
 #include <iostream>
 #include <vector>
 
@@ -776,7 +775,7 @@ int main()
 		float x = i/k;
 		float y = n1/m1;
 		float z = n2/m2;
-		if((x<=y && x>=z) || (x>=y && x<=z))
+		if((x<y && x>z) || (x>y && x<z))
 		{
 			if(ifSimple(i,k))
 				r.push_back(i);
