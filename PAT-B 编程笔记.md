@@ -1069,6 +1069,7 @@ int main()
 ```
 
 ```C++
+//直接合并AB，输出的时候判断是否输出过就可以
 #include <iostream>
 using namespace std;
 int main() {
