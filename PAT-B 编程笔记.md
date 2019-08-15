@@ -1019,6 +1019,72 @@ int main() {
     return 0;
 }
 ```
+
+### 1093 字符串A+B
+给定两个字符串 A 和 B，本题要求你输出 A+B，即两个字符串的并集。要求先输出 A，再输出 B，但重复的字符必须被剔除。    
+
+输入格式：    
+输入在两行中分别给出 A 和 B，均为长度不超过 10    
+​6     
+​​ 的、由可见 ASCII 字符 (即码值为32~126)和空格组成的、由回车标识结束的非空字符串。    
+
+ 
+输出格式：     
+在一行中输出题面要求的 A 和 B 的和。    
+
+输入样例：
+```
+This is a sample test
+to show you_How it works
+```
+输出样例：
+```
+This ampletowyu_Hrk
+```
+
+```C++
+#include <iostream>
+#include <string>
+using namespace std;
+int main()
+{
+	string a,b;
+	getline(cin,a);
+	getline(cin,b);
+	string res;
+	for(int i = 0; i < a.length(); i++)
+	{
+		if(b.find(a[i]) != b.npos)
+			b.erase(b.find(a[i]),1);
+		if(res.find(a[i]) == res.npos)
+			res=res+a[i];
+	}
+	for(int i = 0; i < b.length(); i++)
+	{
+		if(res.find(b[i]) == res.npos)
+			res=res+b[i];
+	}
+	cout << res;
+}
+```
+
+```C++
+#include <iostream>
+using namespace std;
+int main() {
+    string s1, s2, s;
+    int hash[200] = {0};
+    getline(cin, s1);
+    getline(cin, s2);
+    s = s1 + s2;
+    for (int i = 0; i < s.size(); i++) {
+        if (hash[s[i]] == 0) cout << s[i];
+        hash[s[i]] = 1;
+    }
+    return 0;
+}
+```
+
 ### 1094 谷歌的招聘
 本题要求你编程解决一个更通用的问题：从任一给定的长度为 L 的数字中，找出最早出现的 K 位连续数字所组成的素数。    
 
