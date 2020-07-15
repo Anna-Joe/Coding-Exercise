@@ -167,9 +167,9 @@ void inOrder(int root)
 {
 	if (root >= n)
 		return;
-	inOrder(2 * root );
+	inOrder(2 * root + 1 );
 	level[root] = in[t++];
-	inOrder(2 * root + 1);
+	inOrder(2 * root + 2);
 }
 
 int main()
@@ -194,7 +194,96 @@ int main()
 
 
 
-# 数的遍历
+## 1099 **Build A Binary Search Tree** **(30)**
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤100) which is the total number of nodes in the tree. The next *N* lines each contains the left and the right children of a node in the format `left_index right_index`, provided that the nodes are numbered from 0 to *N*−1, and 0 is always the root. If one child is missing, then −1 will represent the NULL child pointer. Finally *N* distinct integer keys are given in the last line.
+
+### Output Specification:
+
+For each test case, print in one line the level order traversal sequence of that tree. All the numbers must be separated by a space, with no extra space at the end of the line.
+
+### Sample Input:
+
+```in
+9
+1 6
+2 3
+-1 -1
+-1 4
+5 -1
+-1 -1
+7 -1
+-1 8
+-1 -1
+73 45 11 58 82 25 67 38 42
+```
+
+### Sample Output:
+
+```out
+58 25 82 11 38 67 45 73 42
+```
+
+### Code
+
+```c++
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, cnt, b[100];
+struct node
+{
+	int data, l, r, index, level;
+}a[110];
+
+bool cmp(node x, node y)
+{
+	if (x.level != y.level)
+		return x.level < y.level;
+	return x.index < y.index;
+}
+void dfs(int root, int index, int level)
+{
+	if (a[root].l == -1 && a[root].r == -1)
+	{
+		a[root] = { b[cnt++],a[root].l,a[root].r,index,level };
+	}
+	else
+	{
+		if(a[root].l != -1) dfs(a[root].l, index*2 + 1, level + 1);
+		a[root] = { b[cnt++],a[root].l,a[root].r,index,level };
+		if (a[root].r != -1) dfs(a[root].r, index * 2 + 2, level + 1);
+	}
+}
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		cin >> a[i].l >> a[i].r;
+	for (int i = 0; i < n; i++)
+		cin >> b[i];
+	sort(b, b + n);
+	dfs(0, 0, 0);
+	sort(a, a + n, cmp);
+	cout << a[0].data;
+	for (int i = 1; i < n; i++)
+		cout << " " << a[i].data;
+
+	return 0;
+}
+```
+
+### Summary
+
+做完树的遍历再做一次二叉树的几个题
+
+
+
+# 树的遍历
 
 ## 1004 **Counting Leaves** (30)
 
