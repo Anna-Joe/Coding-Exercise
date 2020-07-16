@@ -396,3 +396,156 @@ int main()
 - 深度优先遍历的大致思路就是 找到叶子节点（递归出口），遍历所有孩子节点
 - 这题可能是深度优先的最简单应用吧
 
+
+
+## **1020** **Tree Traversals** (25)
+
+Suppose that all the keys in a binary tree are distinct positive integers. Given the postorder and inorder traversal sequences, you are supposed to output the level order traversal sequence of the corresponding binary tree.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤30), the total number of nodes in the binary tree. The second line gives the postorder sequence and the third line gives the inorder sequence. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the level order traversal sequence of the corresponding binary tree. All the numbers in a line must be separated by exactly one space, and there must be no extra space at the end of the line.
+
+### Sample Input:
+
+```in
+7
+2 3 1 5 7 6 4
+1 2 3 4 5 6 7
+```
+
+### Sample Output:
+
+```out
+4 1 6 3 5 7 2
+```
+
+### Explaining
+
+给出二叉树的先序遍历和中序遍历，要求输出层次遍历
+
+### Thinking
+
+后序遍历一定以根节点结尾（先序遍历一定以根节点开头）
+
+在中序序列中找到根节点的位置，以此为分界点，左边是左子树序列，右边是右子树序列
+
+根节点同时也是层次遍历的第一个节点
+
+层次遍历根节点与孩子节点的关系 ，已知根的下标为i的情况下，左孩子为2i+1，右孩子为2i+2
+
+- 根据后序序列和中序序列的关系，通过先序构造法造出二叉树
+- 中间穿插记录层次遍历的下标以此来完成层次遍历序列
+
+### Code
+
+```c++
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include <vector>
+using namespace std;
+
+vector<int> post, in;
+map<int, int> level;
+
+/*!
+ * \brief preOrder
+ * \param root: index of post[]
+ * \param start:start of child tree, index of in[]
+ * \param end:end of the child tree, index of in[]
+ * \param index:index of level[]
+ */
+void pre(int root, int start, int end, int index)
+{
+	if (start > end)
+		return;
+	int i = start;
+    
+    //find the root's position in in[]
+	while (i < end && in[i] != post[root])
+		i++;
+	level[index] = post[root];
+   
+    //root of left tree,from pos,to pos,index of level
+	pre(root - (end - i + 1), start, i - 1, 2 * index + 1);
+   
+    //root of right tree,from pos,to pos,index of level
+	pre(root - 1, i + 1, end, 2 * index + 2);
+	
+    //attention:"2*index+1 or 2" because of the ralationship between root and children
+}
+int main()
+{
+	int n = 0;
+	cin >> n;
+
+	post.resize(n);
+	in.resize(n);
+
+	for (int i = 0; i < n; ++i)
+		cin >> post[i];
+	for (int i = 0; i < n; ++i)
+		cin >> in[i];
+
+	pre(n - 1, 0, n - 1, 0);
+	auto it = level.begin();
+	printf("%d", it->second);
+	while (++it != level.end())
+		printf(" %d", it->second);
+
+	return 0;
+}
+```
+
+### Summary
+
+在构造二叉树的过程中记录层序序列的序号是一种很重要的算法思想，在树的相关题目里已经是第三次用到了，谨记根节点与孩子节点的关系。
+
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include <vector>
+#include <stack>
+using namespace std;
+
+struct node
+{
+	int data;
+	vector<int> child;
+}a[101];
+
+stack<int> tmpPath;
+
+
+
+
+int main()
+{
+	int n, m, w;
+	cin >> n >> m >> w;
+	for (int i = 0; i < n; i++)
+		cin >> a[i].data;
+	for (int i = 0; i < m; i++)
+	{
+		int id, k;
+		cin >> id >> k;
+		for (int j = 0; j < k; j++)
+		{
+			int ch;
+			cin >> ch;
+			a[id].child.emplace_back(ch);
+		}
+	}
+
+
+
+	return 0;
+
+}
