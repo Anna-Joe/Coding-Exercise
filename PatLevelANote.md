@@ -507,6 +507,72 @@ int main()
 
 在构造二叉树的过程中记录层序序列的序号是一种很重要的算法思想，在树的相关题目里已经是第三次用到了，谨记根节点与孩子节点的关系。
 
+
+
+## 1053 Path of Equal Weight (30)
+
+Given a non-empty tree with root *R*, and with weight *W**i* assigned to each tree node *T**i*. The **weight of a path from R to L** is defined to be the sum of the weights of all the nodes along the path from *R* to any leaf node *L*.
+
+Now given any weighted tree, you are supposed to find all the paths with their weights equal to a given number. For example, let's consider the tree showed in the following figure: for each node, the upper number is the node ID which is a two-digit number, and the lower number is the weight of that node. Suppose that the given number is 24, then there exists 4 different paths which have the same given weight: {10 5 2 7}, {10 4 10}, {10 3 3 6 2} and {10 3 3 6 2}, which correspond to the red edges in the figure.
+
+![img](https://images.ptausercontent.com/212)
+
+### Input Specification:
+
+Each input file contains one test case. Each case starts with a line containing 0<*N*≤100, the number of nodes in a tree, *M* (<*N*), the number of non-leaf nodes, and 0<*S*<230, the given weight number. The next line contains *N* positive numbers where *W**i* (<1000) corresponds to the tree node *T**i*. Then *M* lines follow, each in the format:
+
+```
+ID K ID[1] ID[2] ... ID[K]
+```
+
+where `ID` is a two-digit number representing a given non-leaf node, `K` is the number of its children, followed by a sequence of two-digit `ID`'s of its children. For the sake of simplicity, let us fix the root ID to be `00`.
+
+### Output Specification:
+
+For each test case, print all the paths with weight S in **non-increasing** order. Each path occupies a line with printed weights from the root to the leaf in order. All the numbers must be separated by a space with no extra space at the end of the line.
+
+Note: sequence {*A*1,*A*2,⋯,*A**n*} is said to be **greater than** sequence {*B*1,*B*2,⋯,*B**m*} if there exists 1≤*k*<*m**i**n*{*n*,*m*} such that *A**i*=*B**i* for *i*=1,⋯,*k*, and *A**k*+1>*B**k*+1.
+
+### Sample Input:
+
+```in
+20 9 24
+10 2 4 3 5 10 2 18 9 7 2 2 1 3 12 1 8 6 2 2
+00 4 01 02 03 04
+02 1 05
+04 2 06 07
+03 3 11 12 13
+06 1 09
+07 2 08 10
+16 1 15
+13 3 14 16 17
+17 2 18 19
+```
+
+### Sample Output:
+
+```out
+10 5 2 7
+10 4 10
+10 3 3 6 2
+10 3 3 6 2
+```
+
+### Explaining
+
+给出一棵带权树的非叶子节点序列，输出满足目标权值的路径（分支）
+
+### Thinking
+
+- dfs建树，准备一个数组存储路径，满足目标权值的时候输出，大于或小于目标返回，并清空路径数组
+
+- 一大于就返回清空，是不对的，应该回溯，并且在路径权值的基础上减去当前节点值
+
+- 这里忽略了输出的时候，需要排序，按权值大的序列优先输出。借鉴liuchuo的代码，将权值的排序写在，读取节点孩子的时候，这样遍历的时候会优先遍历权值大的节点。
+
+### Code
+
+```c++
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -521,14 +587,42 @@ struct node
 	vector<int> child;
 }a[101];
 
-stack<int> tmpPath;
+vector<int> tmpPath;
+int sum = 0,l = 0,L = 0;
+int n, m, w;
 
-
-
+bool cmp(int x, int y)
+{
+	return a[x].data > a[y].data;
+}
+void dfs(int root)
+{
+	tmpPath.emplace_back(a[root].data);
+	sum += tmpPath[l++];
+	if (a[root].child.size() == 0)
+	{
+		if (sum == w)
+		{
+			cout << tmpPath[0];
+			for (int i = 1; i < l; i++)
+				cout << " " << tmpPath[i];
+			cout << endl;
+		}
+		sum -= tmpPath[--l];
+		tmpPath.pop_back();
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < a[root].child.size(); i++)
+			dfs(a[root].child[i]);
+		sum -= tmpPath[--l];
+		tmpPath.pop_back();
+	}
+}
 
 int main()
 {
-	int n, m, w;
 	cin >> n >> m >> w;
 	for (int i = 0; i < n; i++)
 		cin >> a[i].data;
@@ -542,10 +636,19 @@ int main()
 			cin >> ch;
 			a[id].child.emplace_back(ch);
 		}
+		sort(a[id].child.begin(), a[id].child.end(), cmp);
 	}
 
-
+	dfs(0);
 
 	return 0;
 
 }
+```
+
+### Summary
+
+对于见过的算法，基本可以运用了。算法还是一个需要积累的过程。
+
+
+  
