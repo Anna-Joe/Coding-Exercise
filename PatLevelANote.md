@@ -763,5 +763,122 @@ int main()
 
 ### Summary
 
-- 注意几个要点，pr都是小数，所以data最好也用小数存储，r是百分号的情况，计算时应/100
+- 注意几个要点，p、r都是小数，所以data最好也用小数存储，r是百分号的情况，计算时应/100
 
+
+
+## 1086 **Tree Traversals Again** (25)
+
+An inorder binary tree traversal can be implemented in a non-recursive way with a stack. For example, suppose that when a 6-node binary tree (with the keys numbered from 1 to 6) is traversed, the stack operations are: push(1); push(2); push(3); pop(); pop(); push(4); pop(); pop(); push(5); push(6); pop(); pop(). Then a unique binary tree (shown in Figure 1) can be generated from this sequence of operations. Your task is to give the postorder traversal sequence of this tree.
+
+![img](https://images.ptausercontent.com/30)
+Figure 1
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive integer *N* (≤30) which is the total number of nodes in a tree (and hence the nodes are numbered from 1 to *N*). Then 2*N* lines follow, each describes a stack operation in the format: "Push X" where X is the index of the node being pushed onto the stack; or "Pop" meaning to pop one node from the stack.
+
+### Output Specification:
+
+For each test case, print the postorder traversal sequence of the corresponding tree in one line. A solution is guaranteed to exist. All the numbers must be separated by exactly one space, and there must be no extra space at the end of the line.
+
+### Sample Input:
+
+```in
+6
+Push 1
+Push 2
+Push 3
+Pop
+Pop
+Push 4
+Pop
+Pop
+Push 5
+Push 6
+Pop
+Pop
+```
+
+### Sample Output:
+
+```out
+3 4 2 6 5 1
+```
+
+### Explaining
+
+通过push、pop的过程构造树，然后输出树的后序序列
+
+### Thinking
+
+push的过程可以得到先序序列，pop的过程可以得到中序序列，
+
+转换为一道已知先序和中序求后序序列的题
+
+### Code
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <vector>
+#include <stack>
+#include <cstring>
+
+using namespace std;
+
+int n,index;
+vector<int> pre,in,post,num;
+void postOrder(int root,int start,int end)
+{
+	if (start >= end)
+		return;
+	int i = root;
+	while (i < end && in[i] != pre[root])
+		i++;
+	postOrder(root+1,start,i-1);
+	postOrder(root+i-start+1,i+1,end);
+	post.push_back(pre[root]);
+}
+int main()
+{
+	cin >> n;
+
+	stack<int> tmp;
+	int key = 0;
+	for(int i = 0; i < 2*n; ++i)
+	{
+		string s;
+		cin >> s;
+		if (s.length() == 4)
+		{
+			int k;
+			cin >> k;
+			tmp.push(key);
+			num.push_back(k);
+			pre.push_back(key);
+		}
+		else
+		{
+			key = tmp.top();
+			in.push_back(key);
+			tmp.pop();
+		}
+
+	}
+
+	postOrder(0, 0, n - 1);
+
+	cout << num[post[0]];
+	for (int i = 1; i < n; i++)
+		cout << " " << num[post[i]];
+	return 0;
+}
+
+
+```
+
+
+
+### Summary
