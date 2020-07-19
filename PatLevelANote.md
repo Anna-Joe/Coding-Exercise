@@ -651,4 +651,117 @@ int main()
 对于见过的算法，基本可以运用了。算法还是一个需要积累的过程。
 
 
-  
+
+## 1079 **Total Sales of Supply Chain** (25)
+
+A supply chain is a network of retailers（零售商）, distributors（经销商）, and suppliers（供应商）-- everyone involved in moving a product from supplier to customer.
+
+Starting from one root supplier, everyone on the chain buys products from one's supplier in a price *P* and sell or distribute them in a price that is *r*% higher than *P*. Only the retailers will face the customers. It is assumed that each member in the supply chain has exactly one supplier except the root supplier, and there is no supply cycle.
+
+Now given a supply chain, you are supposed to tell the total sales from all the retailers.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains three positive numbers: *N* (≤105), the total number of the members in the supply chain (and hence their ID's are numbered from 0 to *N*−1, and the root supplier's ID is 0); *P*, the unit price given by the root supplier; and *r*, the percentage rate of price increment for each distributor or retailer. Then *N* lines follow, each describes a distributor or retailer in the following format:
+
+*K**i* ID[1] ID[2] ... ID[*K**i*]
+
+where in the *i*-th line, *K**i* is the total number of distributors or retailers who receive products from supplier *i*, and is then followed by the ID's of these distributors or retailers. *K**j* being 0 means that the *j*-th member is a retailer, then instead the total amount of the product will be given after *K**j*. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the total sales we can expect from all the retailers, accurate up to 1 decimal place. It is guaranteed that the number will not exceed 1010.
+
+### Sample Input:
+
+```in
+10 1.80 1.00
+3 2 3 5
+1 9
+1 4
+1 7
+0 7
+2 6 1
+1 8
+0 9
+0 4
+0 3
+```
+
+### Sample Output:
+
+```out
+42.4
+```
+
+### Explaining
+
+在供应商，经销商和零售商构成的供应链中，供应商可以看成叶子节点，供应量看成叶子节点的权重，供应链的长度看成根到叶的路径长度。由此来求，零售商的最后零售额=供应量（叶子节点权重）×（1+利润率/100）^供应链长（叶子节点深度）×价格
+
+### Thinking
+
+bfs建树（就是在输入数据的同时记录孩子节点），dfs求权重和节点深度
+
+### Code
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+struct node
+{
+	double data;
+	vector<int> child;
+}a[1000001];
+
+double ans=0.0,r,p;
+
+void dfs(int root, int depth)
+{
+	if (a[root].child.size() == 0)//叶子节点
+	{
+		ans += a[root].data * pow(1 + r, depth);
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < a[root].child.size(); ++i)
+			dfs(a[root].child[i], depth+1);
+	}
+}
+int main()
+{
+	int n;
+	scanf("%d %lf %lf", &n, &p, &r);
+	//cin >> n >> p >> r;
+	r = r / 100;
+	for (int i = 0; i < n; i++)
+	{
+		int k;
+		cin >> k;
+		if (k != 0)
+		{
+			a[i].child.resize(k);
+			for (int j = 0; j < k; j++)
+				cin >> a[i].child[j];
+			a[i].data = 0;
+		}
+		else
+			cin >> a[i].data;
+	}
+	dfs(0, 0);
+	printf("%.1f", ans * p);
+	return 0;
+}
+
+```
+
+### Summary
+
+- 注意几个要点，pr都是小数，所以data最好也用小数存储，r是百分号的情况，计算时应/100
+
