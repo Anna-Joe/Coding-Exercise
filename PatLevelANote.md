@@ -819,8 +819,6 @@ push的过程可以得到先序序列，pop的过程可以得到中序序列，
 ### Code
 
 ```c++
-#pragma warning(disable:4996)
-
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -828,13 +826,13 @@ push的过程可以得到先序序列，pop的过程可以得到中序序列，
 
 using namespace std;
 
-int n,index;
-vector<int> pre,in,post,num;
+int n;
+vector<int> pre,in,post,value;
 void postOrder(int root,int start,int end)
 {
-	if (start >= end)
+	if (start > end)
 		return;
-	int i = root;
+	int i = start;
 	while (i < end && in[i] != pre[root])
 		i++;
 	postOrder(root+1,start,i-1);
@@ -855,14 +853,12 @@ int main()
 		{
 			int k;
 			cin >> k;
-			tmp.push(key);
-			num.push_back(k);
-			pre.push_back(key);
+			tmp.push(k);
+			pre.push_back(k);
 		}
 		else
 		{
-			key = tmp.top();
-			in.push_back(key);
+			in.push_back(tmp.top());
 			tmp.pop();
 		}
 
@@ -870,15 +866,121 @@ int main()
 
 	postOrder(0, 0, n - 1);
 
-	cout << num[post[0]];
+	cout << post[0];
 	for (int i = 1; i < n; i++)
-		cout << " " << num[post[i]];
+		cout << " " << post[i];
 	return 0;
 }
-
-
 ```
 
 
 
 ### Summary
+
+- cin>>string可以直接获取一个字符串，字符串和数字 的组合可以使用scanf也可以使用cin
+
+
+
+## 1090 Highest Price in Supply Chain (25)
+
+A supply chain is a network of retailers（零售商）, distributors（经销商）, and suppliers（供应商）-- everyone involved in moving a product from supplier to customer.
+
+Starting from one root supplier, everyone on the chain buys products from one's supplier in a price *P* and sell or distribute them in a price that is *r*% higher than *P*. It is assumed that each member in the supply chain has exactly one supplier except the root supplier, and there is no supply cycle.
+
+Now given a supply chain, you are supposed to tell the highest price we can expect from some retailers.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, The first line contains three positive numbers: *N* (≤105), the total number of the members in the supply chain (and hence they are numbered from 0 to *N*−1); *P*, the price given by the root supplier; and *r*, the percentage rate of price increment for each distributor or retailer. Then the next line contains *N* numbers, each number Si is the index of the supplier for the *i*-th member. S*root* for the root supplier is defined to be −1. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the highest price we can expect from some retailers, accurate up to 2 decimal places, and the number of retailers that sell at the highest price. There must be one space between the two numbers. It is guaranteed that the price will not exceed 1010.
+
+### Sample Input:
+
+```in
+9 1.80 1.00
+1 5 4 4 -1 4 5 3 6
+```
+
+### Sample Output:
+
+```out
+1.85 2
+```
+
+### Explaining
+
+给出供应链和供应价格，根节点应该就是最后的零售商，每个节点的数字表示这个节点的供应商（其实也就是父节点），要求最高零售价和卖出这个零售价的零售商个数
+
+### Thinking
+
+其实就是根据给出的信息求树的层次遍历，求出最高的权值和最深的深度的节点数
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+struct node
+{
+	int data;
+	vector<int> child;
+};
+
+vector<node> v;
+double maxP = 0;
+int maxCount = 0;
+
+int n;
+double r;
+double p;
+
+vector<double> pList;
+void dfs(int root, int depth)
+{
+	if (v[root].child.size() == 0)
+	{
+		double price = p * pow(1 + r / 100, depth);
+		v[root].data = price;
+		pList.emplace_back(price);
+		if (price > maxP)
+			maxP = price;
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < v[root].child.size(); ++i)
+			dfs(v[root].child[i], depth + 1);
+	}
+}
+int main()
+{
+	cin >> n >> p >> r;
+	v.resize(n);
+	int root = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		int k;
+		cin >> k;
+		if (k != -1)
+			v[k].child.emplace_back(i);
+		else
+			root = i;
+	}
+	dfs(root, 0);
+
+	for (int i = 0; i < pList.size(); i++)
+	{
+		if (pList[i] == maxP)
+			maxCount++;
+	}
+	printf("%.2f %d", maxP, maxCount);
+	return 0;
+}
+```
+
