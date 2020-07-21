@@ -984,3 +984,255 @@ int main()
 }
 ```
 
+
+
+## 1094 The Largest Generation (25)
+
+A family hierarchy is usually presented by a pedigree tree where all the nodes on the same level belong to the same generation. Your task is to find the generation with the largest population.
+
+### Input Specification:
+
+Each input file contains one test case. Each case starts with two positive integers *N* (<100) which is the total number of family members in the tree (and hence assume that all the members are numbered from 01 to *N*), and *M* (<*N*) which is the number of family members who have children. Then *M* lines follow, each contains the information of a family member in the following format:
+
+```
+ID K ID[1] ID[2] ... ID[K]
+```
+
+where `ID` is a two-digit number representing a family member, `K` (>0) is the number of his/her children, followed by a sequence of two-digit `ID`'s of his/her children. For the sake of simplicity, let us fix the root `ID` to be `01`. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the largest population number and the level of the corresponding generation. It is assumed that such a generation is unique, and the root level is defined to be 1.
+
+### Sample Input:
+
+```in
+23 13
+21 1 23
+01 4 03 02 04 05
+03 3 06 07 08
+06 2 12 13
+13 1 21
+08 2 15 16
+02 2 09 10
+11 2 19 20
+17 1 22
+05 1 11
+07 1 14
+09 1 17
+10 1 18
+```
+
+### Sample Output:
+
+```out
+9 4
+```
+
+### Explaining
+
+根据给出的数据建立一棵树，输出节点数最多的一层：节点数，层数
+
+### Thinking
+
+bfs建树，dfs获取层数和节点数（记录最大的）
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+struct node
+{
+	int data;
+	vector<int> child;
+	int level;
+};
+
+vector<node> v;
+map<int, int> generationChildren;
+int largestG = 0 , largestL = 0;
+
+void dfs(int root, int level)
+{
+	v[root].level = level;
+	generationChildren[level]++;
+	if (generationChildren[level] > largestG)
+	{
+		largestG = generationChildren[level];
+		largestL = level;
+	}
+
+	if (v[root].child.size() == 0)		
+		return;
+	else
+	{
+		for (int i = 0; i < v[root].child.size(); ++i)
+			dfs(v[root].child[i], level + 1);
+	}
+
+}
+int main()
+{
+	int n, m;
+	cin >> n >> m;
+	v.resize(n+1);
+	for (int i = 0; i < m; i++)
+	{
+		int id, k;
+		cin >> id >> k;
+		v[id].child.resize(k);
+		for (int j = 0; j < k; j++)
+			cin >> v[id].child[j];
+	}
+
+	dfs(1, 1);
+
+	cout << largestG << " " << largestL;
+	return 0;
+}
+```
+
+
+
+## 1102 Invert a Binary Tree (25)
+
+The following is from Max Howell @twitter:
+
+```repl
+Google: 90% of our engineers use the software you wrote (Homebrew), but you can't invert a binary tree on a whiteboard so fuck off.
+```
+
+Now it's your turn to prove that YOU CAN invert a binary tree!
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤10) which is the total number of nodes in the tree -- and hence the nodes are numbered from 0 to *N*−1. Then *N* lines follow, each corresponds to a node from 0 to *N*−1, and gives the indices of the left and right children of the node. If the child does not exist, a `-` will be put at the position. Any pair of children are separated by a space.
+
+### Output Specification:
+
+For each test case, print in the first line the level-order, and then in the second line the in-order traversal sequences of the inverted tree. There must be exactly one space between any adjacent numbers, and no extra space at the end of the line.
+
+### Sample Input:
+
+```in
+8
+1 -
+- -
+0 -
+2 7
+- -
+- -
+5 -
+4 6
+```
+
+### Sample Output:
+
+```out
+3 7 2 6 4 0 5 1
+6 5 7 4 3 2 0 1
+```
+
+### Explaining
+
+给出一颗二叉树的模型，要求输出反转以后的层序和中序
+
+### Thinking
+
+广度优先反转左右子树建立树，直接对此树进行层序和中序遍
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct node 
+{
+	int data;
+	int lchild = -1;
+	int rchild = -1;
+	bool isChild = false;
+	int levelIndex;
+};
+
+vector<node> tree;
+vector<int> in, le;
+
+int root = 0,ii = 0;
+
+int n;
+
+bool cmp(node& x, node& y)
+{
+	return x.levelIndex < y.levelIndex;
+}
+
+void inOrder(int i,int index)
+{
+	if (tree[i].lchild != -1)
+		inOrder(tree[i].lchild,2 * index + 1);
+	
+	in[ii++] =  tree[i].data;
+	tree[i].levelIndex = index;
+
+	if (tree[i].rchild != -1)
+		inOrder(tree[i].rchild, 2 * index + 2);
+}
+int main()
+{
+	cin >> n;
+	tree.resize(n);
+	in.resize(n);
+
+	for (int i = 0; i < n; i++)
+	{
+		char l, r;
+		cin >> l >> r;
+		if (l != '-')
+		{
+			tree[i].rchild = l - '0';
+			tree[l - '0'].isChild = true;
+		}
+		if (r != '-')
+		{
+			tree[i].lchild = r - '0';
+			tree[r - '0'].isChild = true;
+		}
+		tree[i].data = i;
+	}
+
+	//找出根节点
+	for (int i = 0; i < n; i++)
+	{
+		if (tree[i].isChild == false)
+		{
+			root = i;
+			break;
+		}
+	}
+
+	inOrder(root,0);
+
+	sort(tree.begin(), tree.end(), cmp);
+
+	cout << tree[0].data;
+	for (int i = 1; i < n; ++i)
+		cout << " " << tree[i].data;
+	cout << endl;
+	cout << in[0];
+	for (int i = 1; i < n; ++i)
+		cout << " " << in[i];
+
+	return 0;
+}
+```
+
