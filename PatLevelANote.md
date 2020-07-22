@@ -1236,3 +1236,263 @@ int main()
 }
 ```
 
+
+
+## 1106 Lowest Price in Supply Chain (25)
+
+A supply chain is a network of retailers（零售商）, distributors（经销商）, and suppliers（供应商）-- everyone involved in moving a product from supplier to customer.
+
+Starting from one root supplier, everyone on the chain buys products from one's supplier in a price *P* and sell or distribute them in a price that is *r*% higher than *P*. Only the retailers will face the customers. It is assumed that each member in the supply chain has exactly one supplier except the root supplier, and there is no supply cycle.
+
+Now given a supply chain, you are supposed to tell the lowest price a customer can expect from some retailers.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, The first line contains three positive numbers: *N* (≤105), the total number of the members in the supply chain (and hence their ID's are numbered from 0 to *N*−1, and the root supplier's ID is 0); *P*, the price given by the root supplier; and *r*, the percentage rate of price increment for each distributor or retailer. Then *N* lines follow, each describes a distributor or retailer in the following format:
+
+*K**i* ID[1] ID[2] ... ID[*K**i*]
+
+where in the *i*-th line, *K**i* is the total number of distributors or retailers who receive products from supplier *i*, and is then followed by the ID's of these distributors or retailers. *K**j* being 0 means that the *j*-th member is a retailer. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the lowest price we can expect from some retailers, accurate up to 4 decimal places, and the number of retailers that sell at the lowest price. There must be one space between the two numbers. It is guaranteed that the all the prices will not exceed 1010.
+
+### Sample Input:
+
+```in
+10 1.80 1.00
+3 2 3 5
+1 9
+1 4
+1 7
+0
+2 6 1
+1 8
+0
+0
+0
+```
+
+### Sample Output:
+
+```out
+1.8362 2
+```
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+struct node
+{
+	double data;
+	vector<int> child;
+	double price;
+}a[1000001];
+
+double r, p;
+double lowestP = -1.0;
+void dfs(int root, int depth)
+{
+	if (a[root].child.size() == 0)//叶子节点
+	{
+		a[root].price = a[root].data * pow(1 + r, depth);
+		if (lowestP == -1.0 || a[root].price < lowestP)
+			lowestP = a[root].price;
+		return;
+	}
+	else
+	{
+		for (int i = 0; i < a[root].child.size(); ++i)
+			dfs(a[root].child[i], depth + 1);
+	}
+}
+int main()
+{
+	int n;
+	scanf("%d %lf %lf", &n, &p, &r);
+	r = r / 100;
+	for (int i = 0; i < n; i++)
+	{
+		int k;
+		cin >> k;
+		if (k != 0)
+		{
+			a[i].child.resize(k);
+			for (int j = 0; j < k; j++)
+				cin >> a[i].child[j];
+		}
+		a[i].data = p;
+	}
+	dfs(0, 0);
+
+	int count = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (lowestP == a[i].price)
+			count++;
+	}
+
+	printf("%.4f %d", lowestP,count);
+	return 0;
+}
+
+
+```
+
+
+
+## 1115 Counting Nodes in a BST (30)
+
+A Binary Search Tree (BST) is recursively defined as a binary tree which has the following properties:
+
+- The left subtree of a node contains only nodes with keys less than or equal to the node's key.
+- The right subtree of a node contains only nodes with keys greater than the node's key.
+- Both the left and right subtrees must also be binary search trees.
+
+Insert a sequence of numbers into an initially empty binary search tree. Then you are supposed to count the total number of nodes in the lowest 2 levels of the resulting tree.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤1000) which is the size of the input sequence. Then given in the next line are the *N* integers in [−1000,1000] which are supposed to be inserted into an initially empty binary search tree.
+
+### Output Specification:
+
+For each case, print in one line the numbers of nodes in the lowest 2 levels of the resulting tree in the format:
+
+```
+n1 + n2 = n
+```
+
+where `n1` is the number of nodes in the lowest level, `n2` is that of the level above, and `n` is the sum.
+
+### Sample Input:
+
+```in
+9
+25 30 42 16 20 20 35 -5 28
+```
+
+### Sample Output:
+
+```out
+2 + 4 = 6
+```
+
+
+
+
+
+## 1119 Pre- and Post-order Traversals (30)
+
+Suppose that all the keys in a binary tree are distinct positive integers. A unique binary tree can be determined by a given pair of postorder and inorder traversal sequences, or preorder and inorder traversal sequences. However, if only the postorder and preorder traversal sequences are given, the corresponding tree may no longer be unique.
+
+Now given a pair of postorder and preorder traversal sequences, you are supposed to output the corresponding inorder traversal sequence of the tree. If the tree is not unique, simply output any one of them.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer N (≤ 30), the total number of nodes in the binary tree. The second line gives the preorder sequence and the third line gives the postorder sequence. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, first printf in a line `Yes` if the tree is unique, or `No` if not. Then print in the next line the inorder traversal sequence of the corresponding binary tree. If the solution is not unique, any answer would do. It is guaranteed that at least one solution exists. All the numbers in a line must be separated by exactly one space, and there must be no extra space at the end of the line.
+
+### Sample Input 1:
+
+```in
+7
+1 2 3 4 6 7 5
+2 6 7 4 5 3 1
+```
+
+### Sample Output 1:
+
+```out
+Yes
+2 1 6 4 7 3 5
+```
+
+### Sample Input 2:
+
+```in
+4
+1 2 3 4
+2 4 3 1
+```
+
+### Sample Output 2:
+
+```out
+No
+2 1 3 4
+```
+
+### Explaining
+
+仅给出后序和先序序列的情况下，树的结构可能不唯一，如果唯一输出YES，并且输出中序序列，如果不唯一输出NO，也输出中序序列；
+
+### Thinking
+
+- 先序和后序的对应关系
+  - 先序的根和后序的根相等时，先序的左孩子序列号对应的是后序的右孩子序列号
+- 如何判断是否唯一
+  - 如果根节点离左孩子的距离大于1，则有唯一解，并且遍历根左边的子树；
+  - 否则 有多解
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+using namespace std;
+vector<int> in, pre, post;
+bool unique = true;
+void getIn(int preLeft, int preRight, int postLeft, int postRight) 
+{
+	if (preLeft == preRight) 
+	{
+		in.push_back(pre[preLeft]);
+		return;
+	}
+	if (pre[preLeft] == post[postRight]) 
+	{//先序的左孩子 是 后序的右孩子 的时候
+		int i = preLeft + 1;
+
+		//找到后序的根节点在先序的位置
+		while (i <= preRight && pre[i] != post[postRight - 1]) 
+			i++;
+
+		//如果根节点离左孩子的距离大于1 则有唯一解
+		if (i - preLeft > 1)//遍历根左边的子树
+			getIn(preLeft + 1, i - 1, postLeft, postLeft + (i - preLeft - 1) - 1);
+		else//否则 有多解
+			unique = false;
+		in.push_back(post[postRight]);
+		
+		//遍历根右边的子树
+		getIn(i, preRight, postLeft + (i - preLeft - 1), postRight - 1);
+	}
+}
+int main() {
+	int n;
+	scanf("%d", &n);
+	pre.resize(n), post.resize(n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &pre[i]);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &post[i]);
+	getIn(0, n - 1, 0, n - 1);
+	printf("%s\n%d", unique == true ? "Yes" : "No", in[0]);
+	for (int i = 1; i < in.size(); i++)
+		printf(" %d", in[i]);
+	printf("\n");
+	return 0;
+}
+```
+
