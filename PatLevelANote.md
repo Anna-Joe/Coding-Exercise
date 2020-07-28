@@ -1496,3 +1496,276 @@ int main() {
 }
 ```
 
+
+
+# 深度优先搜索
+
+## 1103 Integer Factorization (30)
+
+The *K*−*P* factorization of a positive integer *N* is to write *N* as the sum of the *P*-th power of *K* positive integers. You are supposed to write a program to find the *K*−*P* factorization of *N* for any positive integers *N*, *K* and *P*.
+
+### Input Specification:
+
+Each input file contains one test case which gives in a line the three positive integers *N* (≤400), *K* (≤*N*) and *P* (1<*P*≤7). The numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each case, if the solution exists, output in the format:
+
+```
+N = n[1]^P + ... n[K]^P
+```
+
+where `n[i]` (`i` = 1, ..., `K`) is the `i`-th factor. All the factors must be printed in non-increasing order.
+
+Note: the solution may not be unique. For example, the 5-2 factorization of 169 has 9 solutions, such as 122+42+22+22+12, or 112+62+22+22+22, or more. You must output the one with the maximum sum of the factors. If there is a tie, the largest factor sequence must be chosen -- sequence { *a*1,*a*2,⋯,*a**K* } is said to be **larger** than { *b*1,*b*2,⋯,*b**K* } if there exists 1≤*L*≤*K* such that *a**i*=*b**i* for *i*<*L* and *a**L*>*b**L*.
+
+If there is no solution, simple output `Impossible`.
+
+### Sample Input 1:
+
+```in
+169 5 2
+```
+
+### Sample Output 1:
+
+```out
+169 = 6^2 + 6^2 + 6^2 + 6^2 + 5^2
+```
+
+### Sample Input 2:
+
+```in
+169 167 3
+```
+
+### Sample Output 2:
+
+```out
+Impossible
+```
+
+### Explaining
+
+要求输出，满足K个数的P次方相加为N，最大的序列{nK}，如果不存在输出Impossible
+
+### Thinking
+
+- 取所有p次方小于N的数，作为备用序列
+- 从序列最大的数开始遍历，如果当前总和小于N则继续深度搜索，直到当前总和等于N或者备用序列被遍历完
+- 如果当前搜索次数已满足k，则判断总和与N的大小，相同则输出序列，不同则返回Impossible
+
+### Code
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+int n, k, p;
+int maxFacSum = -1;
+vector<int> ans,tmpAns;
+vector<int> factor;
+
+void initFactor()
+{
+	int index = 1;
+	int tmp = 0;
+	while (tmp <= n)
+	{
+		factor.emplace_back(tmp);
+		tmp = pow(index, p);
+		index++;
+	}
+}
+void dfs(int index,int tmpK,int facSum,int tmpSum)
+{
+	if (tmpK == k)
+	{
+		if (tmpSum == n && facSum > maxFacSum)
+		{
+			maxFacSum = facSum;
+			ans = tmpAns;
+		}
+		return;
+	}
+	while(index >= 1)
+	{
+		if (tmpSum + factor[index] <= n)
+		{
+			tmpAns[tmpK] = index;
+			dfs(index, tmpK+1, facSum + index,tmpSum + factor[index]);
+		}
+		if (index == 1)return;
+		index--;
+	}
+
+}
+int main()
+{
+	cin >> n >> k >> p;
+	tmpAns.resize(n);
+	initFactor();
+	dfs(factor.size() - 1, 0, 0, 0);
+
+	if (maxFacSum == -1)
+		cout << "Impossible";
+	else
+	{
+		printf("%d = %d^%d", n, ans[0], p);
+		for(int i = 1 ; i < k;i++)
+			printf(" + %d^%d", ans[i], p);
+	}
+	return 0;
+}
+```
+
+
+
+# 广度优先搜索
+
+## 1091 Acute Stroke (30)
+
+One important factor to identify acute stroke (急性脑卒中) is the volume of the stroke core. Given the results of image analysis in which the core regions are identified in each MRI slice, your job is to calculate the volume of the stroke core.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains 4 positive integers: *M*, *N*, *L* and *T*, where *M* and *N* are the sizes of each slice (i.e. pixels of a slice are in an *M*×*N* matrix, and the maximum resolution is 1286 by 128); *L* (≤60) is the number of slices of a brain; and *T* is the integer threshold（整数阈值） (i.e. if the volume（体积） of a connected core is less than *T*, then that core must not be counted).
+
+Then *L* slices are given. Each slice is represented by an *M*×*N* matrix of 0's and 1's, where 1 represents a pixel （像素）of stroke, and 0 means normal. Since the thickness of a slice is a constant, we only have to count the number of 1's to obtain the volume. However, there might be several separated core regions in a brain, and only those with their volumes no less than *T* are counted. Two pixels are **connected** and hence belong to the same region if they share a common side, as shown by Figure 1 where all the 6 red pixels are connected to the blue one.
+
+![figstroke.jpg](https://images.ptausercontent.com/f85c00cc-62ce-41ff-8dd0-d1c288d87409.jpg)
+
+Figure 1
+
+### Output Specification:
+
+For each case, output in a line the total volume of the stroke core.
+
+### Sample Input:
+
+```in
+3 4 5 2
+1 1 1 1
+1 1 1 1
+1 1 1 1
+0 0 1 1
+0 0 1 1
+0 0 1 1
+1 0 1 1
+0 1 0 0
+0 0 0 0
+1 0 1 1
+0 0 0 0
+0 0 0 0
+0 0 0 1
+0 0 0 1
+1 0 0 0
+```
+
+### Sample Output:
+
+```out
+26
+```
+
+### Explaining
+
+在M×N×L的三维模型中找到连续的方块面积大于T的方块总数，连续方块被认为是同一方块的上下左右前后方块
+
+### Thinking
+
+使用队列存储一个方块的相邻方块，一边记录方块数量，大于T的数量计入总面积
+
+### Code
+
+```c++
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+//节点结构 默认构造函数新建方便
+struct node
+{
+	int x, y, z;
+
+	node() {}
+	node(int x, int y, int z) :
+		x(x), y(y), z(z) {}
+};
+
+//原始矩阵 访问矩阵
+int m, n, l,t;
+int a[60][1286][128];
+bool v[60][1286][128];
+
+//三个坐标的变化数组 分别对应一个节点的上下左右前后节点
+int dx[6] = { 1,0,0,-1,0,0 };
+int dy[6] = { 0,1,0,0,-1,0 };
+int dz[6] = { 0,0,1,0,0,-1 };
+
+bool jude(int x, int y, int z)
+{
+	if (x < 0 || x >= l || y < 0 || y >= m || z < 0 || z >= n)
+		return false;
+	if (a[x][y][z] == 0 || v[x][y][z] == true)
+		return false;
+
+	return true;
+}
+
+int bfs(int x, int y, int z)
+{
+	int cnt = 0;
+	node brain(x, y, z);
+	queue<node> q;
+	q.push(brain);
+	v[x][y][z] = true;
+	while (!q.empty())
+	{
+		node tmp = q.front();
+		q.pop();
+		cnt++;
+		for (int i = 0; i < 6; i++)
+		{
+			int nx = tmp.x + dx[i];
+			int ny = tmp.y + dy[i];
+			int nz = tmp.z + dz[i];
+			if (!jude(nx, ny ,nz))
+				continue;
+			node newN(nx, ny, nz);
+			q.push(newN);
+			v[nx][ny][nz] = true;
+		}
+	}
+	if (cnt >= t)
+		return cnt;
+	else
+		return 0;
+}
+
+int main()
+{
+	cin >> m >> n >> l >> t;
+	for (int i = 0; i < l; i++)
+		for (int j = 0; j < m; j++)
+			for (int k = 0; k < n; k++)
+				cin >> a[i][j][k];
+
+	int ans = 0;
+	for (int i = 0; i < l; i++)
+		for (int j = 0; j < m; j++)
+			for (int k = 0; k < n; k++)
+				if (a[i][j][k] == 1 && v[i][j][k] == false)
+					ans += bfs(i, j, k);
+
+	cout << ans;
+	return 0;
+
+}
+```
+
