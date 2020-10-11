@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 # 二叉搜索树
 
 ## 1043 Is It a Binary Search Tree (25)
@@ -1928,4 +1932,273 @@ int main()
 
 
 
-### 
+# 哈希、散列
+
+## 1048 Find Coins (25分)
+
+Eva loves to collect coins from all over the universe, including some other planets like Mars. One day she visited a universal shopping mall which could accept all kinds of coins as payments. However, there was a special requirement of the payment: for each bill, she could only use exactly two coins to pay the exact amount. Since she has as many as 105 coins with her, she definitely needs your help. You are supposed to tell her, for any given amount of money, whether or not she can find two coins to pay for it.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains 2 positive numbers: *N* (≤105, the total number of coins) and *M* (≤103, the amount of money Eva has to pay). The second line contains *N* face values of the coins, which are all positive numbers no more than 500. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in one line the two face values *V*1 and *V*2 (separated by a space) such that *V*1+*V*2=*M* and *V*1≤*V*2. If such a solution is not unique, output the one with the smallest *V*1. If there is no solution, output `No Solution` instead.
+
+### Sample Input 1:
+
+```in
+8 15
+1 2 8 7 2 4 11 15
+```
+
+### Sample Output 1:
+
+```out
+4 11
+```
+
+### Sample Input 2:
+
+```in
+7 14
+1 8 7 2 4 11 15
+```
+
+### Sample Output 2:
+
+```out
+No Solution
+```
+
+### Explaining
+
+在一个序列中求和为目标值的两个数
+
+### Thinking
+
+学习非暴力解法，使用哈希集合解决。
+
+c++哈希集合构建思想：序列值作为下标，数组元素表示该数据是否存在
+
+求和思想：当前值未到目标值，且与目标值的差值在序列中
+
+### Code
+
+```C++
+#include <iostream>
+int a[1001];
+
+using namespace std;
+
+int main()
+{
+	int n, m, tmp;
+	scanf("%d %d", &n, &m);
+	for (int i = 0; i < n; i++)
+	{
+		scanf("%d", &tmp);
+		a[tmp]++;//a是一个哈希集合
+	}
+
+	for (int i = 0; i < 1001; i++)
+	{
+		if (a[i])
+		{
+			a[i]--;
+			if (m > i && a[m - i])//i未到目标值，且与目标值的差值在序列中
+			{
+				if(i < m-i)
+					printf("%d %d", i, m - i);
+				else
+					printf("%d %d", m-i, i);
+				return 0;
+			}
+			a[i]++;
+		}
+	}
+
+	printf("No Solution");
+	return 0;
+}
+```
+
+
+
+## 1050 String Subtraction (20分)
+
+Given two strings *S*1 and *S*2, *S*=*S*1−*S*2 is defined to be the remaining string after taking all the characters in *S*2 from *S*1. Your task is simply to calculate *S*1−*S*2 for any given strings. However, it might not be that simple to do it **fast**.
+
+### Input Specification:
+
+Each input file contains one test case. Each case consists of two lines which gives *S*1 and *S*2, respectively. The string lengths of both strings are no more than 104. It is guaranteed that all the characters are visible ASCII codes and white space, and a new line character signals the end of a string.
+
+### Output Specification:
+
+For each test case, print *S*1−*S*2 in one line.
+
+### Sample Input:
+
+```in
+They are students.
+aeiou
+```
+
+### Sample Output:
+
+```out
+Thy r stdnts.
+```
+
+### Explaining
+
+从字符串1中剔除字符串2，输出结果
+
+### Thinking
+
+我的：字符串1存在一个数组里s1，字符串2存在一个数组里s2，遍历s1，每个元素分别与s2中的元素相减
+
+遍历s1输出所有非零的元素值。
+
+柳婼：分别存储两个字符串，然后使用布尔型数组记录s2，遍历s1的所有元素，布尔型数组里false的全部输出
+
+### Code
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+char s1[100000], s2[100000];
+int main()
+{
+	cin.getline(s1, 100000);
+	cin.getline(s2, 100000);
+	int len1 = strlen(s1);
+	int len2 = strlen(s2);
+
+	bool flag[100000] = { false };
+	for (int i = 0; i < len2; i++)
+	{
+		flag[s2[i]] = true;
+	}
+
+	for (int i = 0; i < len1; i++)
+	{
+		if (!flag[s1[i]])
+			printf("%c", s1[i]);
+	}
+
+	return 0;
+}
+
+```
+
+
+
+## 1092 To Buy or Not to Buy (20分)
+
+Eva would like to make a string of beads with her favorite colors so she went to a small shop to buy some beads. There were many colorful strings of beads. However the owner of the shop would only sell the strings in whole pieces. Hence Eva must check whether a string in the shop contains all the beads she needs. She now comes to you for help: if the answer is `Yes`, please tell her the number of extra beads she has to buy; or if the answer is `No`, please tell her the number of beads missing from the string.
+
+For the sake of simplicity, let's use the characters in the ranges [0-9], [a-z], and [A-Z] to represent the colors. For example, the 3rd string in Figure 1 is the one that Eva would like to make. Then the 1st string is okay since it contains all the necessary beads with 8 extra ones; yet the 2nd one is not since there is no black bead and one less red bead.
+
+![figbuy.jpg](https://images.ptausercontent.com/b7e2ffa6-8819-436d-ad79-a41263abe914.jpg)
+
+Figure 1
+
+### Input Specification:
+
+Each input file contains one test case. Each case gives in two lines the strings of no more than 1000 beads which belong to the shop owner and Eva, respectively.
+
+### Output Specification:
+
+For each test case, print your answer in one line. If the answer is `Yes`, then also output the number of extra beads Eva has to buy; or if the answer is `No`, then also output the number of beads missing from the string. There must be exactly 1 space between the answer and the number.
+
+### Sample Input 1:
+
+```in
+ppRYYGrrYBR2258
+YrR8RrY
+```
+
+### Sample Output 1:
+
+```out
+Yes 8
+```
+
+### Sample Input 2:
+
+```in
+ppRYYGrrYB225
+YrR8RrY
+```
+
+### Sample Output 2:
+
+```out
+No 2
+```
+
+### Explaining
+
+匹配两个字符串的相同序列，所给s全部含有目标串的话，输出yes和除匹配上的字符之外的字符个数
+
+所给s不能全部包含的话，输出no和匹配不上的字符个数
+
+### Thinking
+
+跟上面那题差不多。也是准备两个字符串数组，一个布尔型数组，两个int值来记录字符个数；
+
+布尔型数组用来匹配所给串和目标串，一个int记录匹配上的字符，一个int记录未匹配的字符。
+
+如果匹配上的字符数大于等于目标串字符数，则输出yes和未匹配的字符数；
+
+如果匹配上的字符小于目标串字符数，则输出no和（目标串字符数-匹配上字符数）。
+
+
+
+注意：目标串可能有元素重复情况，不能用布尔型存储，改为用整型数组存储。匹配的时候可以减去整型数组元素值；
+
+### Code
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+int main()
+{
+	char s1[10000], s2[10000];
+	cin.getline(s1, 10000);
+	cin.getline(s2, 10000);
+
+	int len1 = strlen(s1);
+	int len2 = strlen(s2);
+	int flag[10000] = { 0 };
+	for (int i = 0; i < len2; i++)
+		flag[s2[i]]++;
+	int matched = 0, unmatched = 0;
+	for (int i = 0; i < len1; i++)
+	{
+		if (flag[s1[i]])
+		{
+			matched++;
+			flag[s1[i]]--;
+		}
+		else
+			unmatched++;
+	}
+
+	if (matched >= len2)
+		printf("Yes %d", unmatched);
+	else
+		printf("No %d", len2 - matched);
+
+	return 0;
+}
+```
+
