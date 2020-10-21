@@ -2305,3 +2305,157 @@ int main() {
 }
 ```
 
+
+
+
+
+# 排序算法
+
+## 1012 The Best Rank (25分)
+
+To evaluate the performance of our first year CS majored students, we consider their grades of three courses only: `C` - C Programming Language, `M` - Mathematics (Calculus or Linear Algrbra), and `E` - English. At the mean time, we encourage students by emphasizing on their best ranks -- that is, among the four ranks with respect to the three courses and the average grade, we print the best rank for each student.
+
+For example, The grades of `C`, `M`, `E` and `A` - Average of 4 students are given as the following:
+
+```
+StudentID  C  M  E  A
+310101     98 85 88 90
+310102     70 95 88 84
+310103     82 87 94 88
+310104     91 91 91 91
+```
+
+Then the best ranks for all the students are No.1 since the 1st one has done the best in C Programming Language, while the 2nd one in Mathematics, the 3rd one in English, and the last one in average.
+
+### Input Specification:
+
+Each input file contains one test case. Each case starts with a line containing 2 numbers *N* and *M* (≤2000), which are the total number of students, and the number of students who would check their ranks, respectively. Then *N* lines follow, each contains a student ID which is a string of 6 digits, followed by the three integer grades (in the range of [0, 100]) of that student in the order of `C`, `M` and `E`. Then there are *M* lines, each containing a student ID.
+
+### Output Specification:
+
+For each of the *M* students, print in one line the best rank for him/her, and the symbol of the corresponding rank, separated by a space.
+
+The priorities of the ranking methods are ordered as `A` > `C` > `M` > `E`. Hence if there are two or more ways for a student to obtain the same best rank, output the one with the highest priority.
+
+If a student is not on the grading list, simply output `N/A`.
+
+### Sample Input:
+
+```in
+5 6
+310101 98 85 88
+310102 70 95 88
+310103 82 87 94
+310104 91 91 91
+310105 85 90 90
+310101
+310102
+310103
+310104
+310105
+999999
+```
+
+### Sample Output:
+
+```out
+1 C
+1 M
+1 E
+1 A
+3 A
+N/A
+```
+
+### Explaining
+
+对每个学生的三门成绩和平均分分别排序，输出所给序号最佳的成绩排序，如果所给序号不在成绩单上，输出N/A
+
+### Thinking
+
+对学生创建一个结构体，结构体里存储学号、各科成绩、各科排名、最佳排名。
+
+难点在于对各科成绩排名并获取到各科排名
+
+### Code
+
+```c++
+
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+struct stu
+{
+    int id,best;
+    int score[4],rank[4];
+};
+stu stuReport[2005];
+int exist[1000000];
+int flag = -1;
+
+bool cmp(stu a, stu b)
+{
+    return a.score[flag]>b.score[flag];
+}
+
+
+int main()
+{
+    int n,m;
+    scanf("%d %d",&n,&m);
+    for(int i = 0; i < n; i++)
+    {
+        scanf("%d %d %d %d",&stuReport[i].id,&stuReport[i].score[1],&stuReport[i].score[2],&stuReport[i].score[3]);
+        stuReport[i].score[0] = (stuReport[i].score[1]+stuReport[i].score[2]+stuReport[i].score[3])/3.0 + 0.5;
+    }
+
+    for(flag = 0; flag <=3; flag++)
+    {
+        sort(stuReport, stuReport+n, cmp);
+        stuReport[0].rank[flag] = 1;
+        for(int i = 1; i < n; i++)
+        {
+            stuReport[i].rank[flag] = i+1;
+            if(stuReport[i].score[flag] == stuReport[i-1].score[flag])//如果是分数相同 排名也相同
+            {
+                stuReport[i].rank[flag] = stuReport[i-1].rank[flag];
+            }
+        }
+    }
+    
+    //获取最佳排名
+    for(int i = 0; i < n; i++)
+    {
+        exist[stuReport[i].id] = i+1;
+        int best = stuReport[i].rank[0];
+        for(flag = 1; flag <= 3; flag ++)
+        {
+            if(stuReport[i].rank[flag] < best)
+            {
+                stuReport[i].best = flag;
+                best = stuReport[i].rank[flag];
+            }
+        }
+    }
+    
+    char t[5] = {'A','C','M','E'};
+    for(int i = 0 ; i < m; i++)
+    {
+        int id = 0;
+        scanf("%d", &id);
+        int index = exist[id];
+        if(index)
+        {
+            int best = stuReport[index].best;
+            int rank = stuReport[index].rank[best];
+            printf("%d %c\n",rank,t[best]);
+        }
+        else
+            printf("N/A\n");
+    }
+
+    return 0;
+}
+```
+
