@@ -2375,7 +2375,9 @@ N/A
 
 对学生创建一个结构体，结构体里存储学号、各科成绩、各科排名、最佳排名。
 
-难点在于对各科成绩排名并获取到各科排名
+难点在于对各科成绩排名并获取到各科排名。
+
+使用sort函数+自定义cmp，分别对分数数组排序，并记录此时的rank数组。二次遍历取到最佳的rank值，最后输出查询结果。
 
 ### Code
 
@@ -2447,8 +2449,8 @@ int main()
         int index = exist[id];
         if(index)
         {
-            int best = stuReport[index].best;
-            int rank = stuReport[index].rank[best];
+            int best = stuReport[index-1].best;
+            int rank = stuReport[index-1].rank[best];
             printf("%d %c\n",rank,t[best]);
         }
         else
@@ -2456,6 +2458,226 @@ int main()
     }
 
     return 0;
+}
+```
+
+
+
+## 1016 Phone Bills (25分)
+
+A long-distance telephone company charges its customers by the following rules:
+
+Making a long-distance call costs a certain amount per minute, depending on the time of day when the call is made. When a customer starts connecting a long-distance call, the time will be recorded, and so will be the time when the customer hangs up the phone. Every calendar month, a bill is sent to the customer for each minute called (at a rate determined by the time of day). Your job is to prepare the bills for each month, given a set of phone call records.
+
+### Input Specification:
+
+Each input file contains one test case. Each case has two parts: the rate structure, and the phone call records.
+
+The rate structure consists of a line with 24 non-negative integers denoting the toll (cents/minute) from 00:00 - 01:00, the toll from 01:00 - 02:00, and so on for each hour in the day.
+
+The next line contains a positive number *N* (≤1000), followed by *N* lines of records. Each phone call record consists of the name of the customer (string of up to 20 characters without space), the time and date (`MM:dd:HH:mm`), and the word `on-line` or `off-line`.
+
+For each test case, all dates will be within a single month. Each `on-line` record is paired with the chronologically next record for the same customer provided it is an `off-line` record. Any `on-line` records that are not paired with an `off-line` record are ignored, as are `off-line` records not paired with an `on-line` record. It is guaranteed that at least one call is well paired in the input. You may assume that no two records for the same customer have the same time. Times are recorded using a 24-hour clock.
+
+### Output Specification:
+
+For each test case, you must print a phone bill for each customer.
+
+Bills must be printed in alphabetical order of customers' names. For each customer, first print in a line the name of the customer and the month of the bill in the format shown by the sample. Then for each time period of a call, print in one line the beginning and ending time and date (`dd:HH:mm`), the lasting time (in minute) and the charge of the call. The calls must be listed in chronological order. Finally, print the total charge for the month in the format shown by the sample.
+
+### Sample Input:
+
+```in
+10 10 10 10 10 10 20 20 20 15 15 15 15 15 15 15 20 30 20 15 15 10 10 10
+10
+CYLL 01:01:06:01 on-line
+CYLL 01:28:16:05 off-line
+CYJJ 01:01:07:00 off-line
+CYLL 01:01:08:03 off-line
+CYJJ 01:01:05:59 on-line
+aaa 01:01:01:03 on-line
+aaa 01:02:00:01 on-line
+CYLL 01:28:15:41 on-line
+aaa 01:05:02:24 on-line
+aaa 01:04:23:59 off-line
+```
+
+### Sample Output:
+
+```out
+CYJJ 01
+01:05:59 01:07:00 61 $12.10
+Total amount: $12.10
+CYLL 01
+01:06:01 01:08:03 122 $24.40
+28:15:41 28:16:05 24 $3.85
+Total amount: $28.25
+aaa 01
+02:00:01 04:23:59 4318 $638.80
+Total amount: $638.80
+```
+
+### Explanning
+
+
+
+### Thinking
+
+
+
+### Code
+
+
+
+
+
+## 1025 PAT Ranking (25分)
+
+Programming Ability Test (PAT) is organized by the College of Computer Science and Technology of Zhejiang University. Each test is supposed to run simultaneously in several places, and the ranklists will be merged immediately after the test. Now it is your job to write a program to correctly merge all the ranklists and generate the final rank.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive number *N* (≤100), the number of test locations. Then *N* ranklists follow, each starts with a line containing a positive integer *K* (≤300), the number of testees, and then *K* lines containing the registration number (a 13-digit number) and the total score of each testee. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, first print in one line the total number of testees. Then print the final ranklist in the following format:
+
+```
+registration_number final_rank location_number local_rank
+```
+
+The locations are numbered from 1 to *N*. The output must be sorted in nondecreasing order of the final ranks. The testees with the same score must have the same rank, and the output must be sorted in nondecreasing order of their registration numbers.
+
+### Sample Input:
+
+```in
+2
+5
+1234567890001 95
+1234567890005 100
+1234567890003 95
+1234567890002 77
+1234567890004 85
+4
+1234567890013 65
+1234567890011 25
+1234567890014 100
+1234567890012 85
+```
+
+### Sample Output:
+
+```out
+9
+1234567890005 1 1 1
+1234567890014 1 2 1
+1234567890001 3 1 2
+1234567890003 3 1 2
+1234567890004 5 1 4
+1234567890012 5 2 2
+1234567890002 7 1 5
+1234567890013 8 2 3
+1234567890011 9 2 4
+```
+
+### Explanning
+
+第一行给出考场总数（例子为2），下一行给出1号考场的考生数，以及每个考生的考号和分数。接着给出2号考场的考生数，和2号考场每个考生的考号和分数。
+
+要求输出考生总数，考号，考生总排名，考生的考场号，考生在该考场的排名
+
+### Thinking
+
+就是首先对两个序列组间排序，然后两个序列共同排序
+
+
+
+注意两个要点：
+
+- 对于排序，相同分数取相同排名。下一排名仍从当前序号开始，直接使用循环变量作为排名序号
+- 对于学号的排序（相同分数，学号小的先输出），可以使用string类型，也可以使用longlongint，输出的时候注意限定字符宽度为13
+
+### Code
+
+```C++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct gradeRec
+{
+	string no;
+	int local;
+	int score;
+	int l_rank;
+	int t_rank;
+};
+gradeRec gradeRecs[30005];
+
+bool cmp(gradeRec a, gradeRec b)
+{
+	if (a.score != b.score)
+		return a.score > b.score;
+	else
+		return a.no < b.no;
+}
+
+int main()
+{
+	int n = 0;//local num
+	scanf("%d", &n);
+
+	int index = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		int k = 0;
+		scanf("%d", &k);
+		gradeRec localRecs[305];
+		for (int j = 0; j < k; j++)
+		{
+			cin >> localRecs[j].no >> localRecs[j].score;
+			localRecs[j].local = i;
+		}
+
+		sort(localRecs,localRecs+k, cmp);
+		localRecs[0].l_rank = 1;
+		gradeRecs[index++] = localRecs[0];
+		for (int j = 1; j < k; j++)
+		{
+			localRecs[j].l_rank = j + 1;
+
+			if (localRecs[j].score == localRecs[j - 1].score)
+				localRecs[j].l_rank = localRecs[j - 1].l_rank;
+
+			gradeRecs[index++] = localRecs[j];
+		}
+
+	}
+
+	sort(gradeRecs, gradeRecs+ index, cmp);
+	gradeRecs[0].t_rank = 1;
+	for (int i = 1; i < index; i++)
+	{
+		gradeRecs[i].t_rank = i + 1;
+
+		if (gradeRecs[i].score == gradeRecs[i - 1].score)
+			gradeRecs[i].t_rank = gradeRecs[i - 1].t_rank;
+	}
+
+	printf("%d\n", index);
+	for (int i = 0; i < index; i++)
+	{
+		cout << gradeRecs[i].no << " " 
+			 << gradeRecs[i].t_rank << " "
+			 << gradeRecs[i].local << " "
+			 << gradeRecs[i].l_rank << endl;
+	}
+	return 0;
 }
 ```
 
