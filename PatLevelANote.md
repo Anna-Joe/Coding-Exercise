@@ -2681,3 +2681,385 @@ int main()
 }
 ```
 
+
+
+## 1028 List Sorting (25分)
+
+Excel can sort records according to any column. Now you are supposed to imitate this function.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains two integers *N* (≤10^5) and *C*, where *N* is the number of records and *C* is the column that you are supposed to sort the records with. Then *N* lines follow, each contains a record of a student. A student's record consists of his or her distinct ID (a 6-digit number), name (a string with no more than 8 characters without space), and grade (an integer between 0 and 100, inclusive).
+
+### Output Specification:
+
+For each test case, output the sorting result in *N* lines. That is, if *C* = 1 then the records must be sorted in increasing order according to ID's; if *C* = 2 then the records must be sorted in non-decreasing order according to names; and if *C* = 3 then the records must be sorted in non-decreasing order according to grades. If there are several students who have the same name or grade, they must be sorted according to their ID's in increasing order.
+
+### Sample Input 1:
+
+```in
+3 1
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+```
+
+### Sample Output 1:
+
+```out
+000001 Zoe 60
+000007 James 85
+000010 Amy 90
+```
+
+### Sample Input 2:
+
+```in
+4 2
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+000002 James 98
+```
+
+### Sample Output 2:
+
+```out
+000010 Amy 90
+000002 James 98
+000007 James 85
+000001 Zoe 60
+```
+
+### Sample Input 3:
+
+```in
+4 3
+000007 James 85
+000010 Amy 90
+000001 Zoe 60
+000002 James 90
+```
+
+### Sample Output 3:
+
+```out
+000001 Zoe 60
+000007 James 85
+000002 James 90
+000010 Amy 90
+```
+
+### Explanning
+
+给出排序的记录数以及排序的列号，对给出的成绩内容进行排序
+
+### Thinking
+
+先存储结构体，学号和成绩使用整型，人名使用string类型。
+
+根据给出的C，调用不同的比较函数；
+
+### Code
+
+```C++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <cstdio>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+struct record
+{
+	int no;
+	string name;
+	int grade;
+};
+
+bool cmp_no(record a, record b)
+{
+	return a.no < b.no;
+}
+
+bool cmp_name(record a, record b)
+{
+	if(a.name != b.name)
+		return a.name < b.name;
+	else
+		return a.no < b.no;
+}
+
+bool cmp_grade(record a, record b)
+{
+	if(a.grade != b.grade)
+		return a.grade < b.grade;
+	else
+		return a.no < b.no;
+}
+
+int main()
+{
+	record recs[100005];
+	int n, c;
+	cin >> n >> c;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> recs[i].no >> recs[i].name >> recs[i].grade;
+	}
+
+	switch (c) 
+	{
+	case 1:
+		sort(recs, recs + n, cmp_no);
+		break;
+	case 2:
+		sort(recs, recs + n, cmp_name);
+		break;
+	case 3:
+		sort(recs, recs + n, cmp_grade);
+		break;
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		printf("%06d %s %d\n", recs[i].no, recs[i].name.c_str(), recs[i].grade);
+	}
+	return 0;
+}
+```
+
+
+
+
+
+## 1055 The World's Richest (25分)
+
+Forbes magazine publishes every year its list of billionaires based on the annual ranking of the world's wealthiest people. Now you are supposed to simulate this job, but concentrate only on the people in a certain range of ages. That is, given the net worths of *N* people, you must find the *M* richest people in a given range of their ages.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains 2 positive integers: *N* (≤10^5) - the total number of people, and *K* (≤10^3) - the number of queries. Then *N* lines follow, each contains the name (string of no more than 8 characters without space), age (integer in (0, 200]), and the net worth (integer in [−10^6,10^6]) of a person. Finally there are *K* lines of queries, each contains three positive integers: *M* (≤100) - the maximum number of outputs, and [`Amin`, `Amax`] which are the range of ages. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each query, first print in a line `Case #X:` where `X` is the query number starting from 1. Then output the *M* richest people with their ages in the range [`Amin`, `Amax`]. Each person's information occupies a line, in the format
+
+```
+Name Age Net_Worth
+```
+
+The outputs must be in non-increasing order of the net worths. In case there are equal worths, it must be in non-decreasing order of the ages. If both worths and ages are the same, then the output must be in non-decreasing alphabetical order of the names. It is guaranteed that there is no two persons share all the same of the three pieces of information. In case no one is found, output `None`.
+
+### Sample Input:
+
+```in
+12 4
+Zoe_Bill 35 2333
+Bob_Volk 24 5888
+Anny_Cin 95 999999
+Williams 30 -22
+Cindy 76 76000
+Alice 18 88888
+Joe_Mike 32 3222
+Michael 5 300000
+Rosemary 40 5888
+Dobby 24 5888
+Billy 24 5888
+Nobody 5 0
+4 15 45
+4 30 35
+4 5 95
+1 45 50
+```
+
+### Sample Output:
+
+```out
+Case #1:
+Alice 18 88888
+Billy 24 5888
+Bob_Volk 24 5888
+Dobby 24 5888
+Case #2:
+Joe_Mike 32 3222
+Zoe_Bill 35 2333
+Williams 30 -22
+Case #3:
+Anny_Cin 95 999999
+Michael 5 300000
+Alice 18 88888
+Cindy 76 76000
+Case #4:
+None
+```
+
+### Explanning
+
+给出候选人总数，和评选的挡位数。候选人信息包括名字，年龄和财富值。评选挡位包括，最大获奖人数和年龄限制。
+
+输出每个挡位底下的获奖人。没有输出None
+
+### Thinking
+
+要写一个使用年龄上下限排序的函数，先使用上下限挑选出符合年龄限制的数据，然后对这些记录的财富排序。
+
+财富值大的排在前面；
+
+财富值相同，年龄小的排在前面
+
+财富值年龄都相同，名字小的排在前面
+
+### Code1
+
+有一个测试点未通过，好像是超时，应该是算法不够精简
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+using namespace std;
+
+struct record
+{
+	string name;
+	int age;
+	int worths;
+};
+bool cmp(record a, record b)
+{
+	if (a.worths != b.worths)
+		return a.worths > b.worths;
+	else if (a.age != b.age)
+		return a.age < b.age;
+	else
+		return a.name < b.name;
+}
+
+void sortByAgeRange(int low, int high, vector<record>& r,vector<record>& fit)
+{
+	for (int i = 0; i < r.size(); i++)
+	{
+		if (r[i].age >= low && r[i].age <= high)
+		{
+			fit.emplace_back(r[i]);
+		}
+	}
+	if(!fit.empty())
+		sort(fit.begin(), fit.end(), cmp);
+}
+
+
+int main()
+{
+	int n = 0, k = 0;
+	scanf("%d %d", &n, &k);
+	vector<record> r(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> r[i].name >> r[i].age >> r[i].worths;
+	}
+
+	for (int i = 0; i < k; i++)
+	{
+		int limit = 0;
+		int min = 0, max = 0;
+		cin >> limit >> min >> max;
+		vector<record> fit;
+		int fitCnt = 0;
+		sortByAgeRange(min, max, r, fit);
+		cout << "Case #" << i + 1 << ":" << endl;
+		if (fit.empty())
+		{
+			cout << "None" << endl;
+		}
+		else
+		{
+			for (int j =0;j<limit && j < fit.size();j++)
+			{
+				printf("%s %d %d\n", fit[j].name.c_str(), fit[j].age, fit[j].worths);
+			}
+
+		}
+	}
+
+	return 0;
+}
+```
+
+### Code2
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <vector>
+using namespace std;
+
+struct record
+{
+	char name[10];
+	int age;
+	int worths;
+};
+bool cmp(record a, record b)
+{
+	if (a.worths != b.worths)
+		return a.worths > b.worths;
+	else if (a.age != b.age)
+		return a.age < b.age;
+	else
+		return (strcmp(a.name, b.name) < 0);
+}
+
+int main()
+{
+	int n = 0, k = 0;
+	scanf("%d %d", &n, &k);
+	vector<record> rt(n),r;
+	for (int i = 0; i < n; i++)
+	{
+		scanf("%s %d %d", rt[i].name, &rt[i].age, &rt[i].worths);
+	}
+	sort(rt.begin(), rt.end(), cmp);
+	vector<int> book(205, 0);
+	for (int i = 0; i < n; i++) {
+		if (book[rt[i].age] < 100) {
+			r.push_back(rt[i]);
+			book[rt[i].age]++;
+		}
+	}
+	for (int i = 0; i < k; i++)
+	{
+		int limit = 0;
+		int min = 0, max = 0;
+		cin >> limit >> min >> max;
+		vector<record> fit;
+		for (int j = 0; j < r.size(); j++)
+		{
+			if (r[j].age >= min && r[j].age <= max)
+				fit.emplace_back(r[j]);
+		}
+		cout << "Case #" << i + 1 << ":" << endl;
+		if (fit.empty())
+		{
+			cout << "None" << endl;
+		}
+		else
+		{
+			for (int j =0;j<limit && j < fit.size();j++)
+			{
+				printf("%s %d %d\n", fit[j].name, fit[j].age, fit[j].worths);
+			}
+
+		}
+	}
+
+	return 0;
+}
+```
+
