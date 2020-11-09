@@ -3299,9 +3299,15 @@ The ranklist must be printed in non-decreasing order of the ranks. For those who
 
 使用map存储记录，id作为key，每道题的分数存在vector里面
 
+- 注意：
+- 在结果中，未通过的题记为0分，没做的题记为-；
+- 所以在存储过程中，对于每道题的初始分数要记为-2，未通过取原值-1
+
 ### Code
 
 ```c++
+//#pragma warning(disable:4996)
+
 #include <cstdio>
 #include <algorithm>
 #include <vector>
@@ -3337,7 +3343,7 @@ int main()
 	{
 		int g = 0;
 		scanf("%d ", &g);
-		queGoal[i]=g;
+		queGoal[i] = g;
 	}
 
 	map<int, node> subMap;
@@ -3350,12 +3356,12 @@ int main()
 		if (tmp.id == 0)
 		{
 			tmp.id = id;
-			tmp.grades.resize(k,-1);
-			tmp.grades[qi-1] = qg;
+			tmp.grades.resize(k, -2);
+			tmp.grades[qi - 1] = qg;
 		}
-		else if (qg > tmp.grades[qi-1])
+		else if (qg > tmp.grades[qi - 1])
 		{
-			tmp.grades[qi-1] = qg;
+			tmp.grades[qi - 1] = qg;
 		}
 	}
 
@@ -3368,7 +3374,7 @@ int main()
 		int flag = 0;
 		for (int i = 0; i < k; i++)
 		{
-			if (grades[i] != -1)
+			if (grades[i] >= 0)
 			{
 				flag = 1;
 				tmp.total += grades[i];
@@ -3379,28 +3385,205 @@ int main()
 		if (flag)
 			rankVec.push_back(tmp);
 	}
-	
+
 	sort(rankVec.begin(), rankVec.end(), cmp);
-	int lastRank = 1,lastTotal = 0;
-	for (int i = 0 ; i < rankVec.size(); i++ )
+	int lastRank = 1, lastTotal = 0;
+	for (int i = 0; i < rankVec.size(); i++)
 	{
 		node tmp = rankVec[i];
-		int rank = i+1;
+		int rank = i + 1;
 		if (lastRank != 1)
 		{
 			if (tmp.total == lastTotal)
 				rank = lastRank;
 		}
-		printf("%d %05d %d",rank,tmp.id,tmp.total);
+		printf("%d %05d %d", rank, tmp.id, tmp.total);
 		lastTotal = tmp.total;
 		lastRank = rank;
 		vector<int> grades = tmp.grades;
 		for (int i = 0; i < k; i++)
 		{
-			if (grades[i] == -1)
+			if(grades[i] == -1)
+				printf(" 0");
+			else if (grades[i] == -2)
 				printf(" -");
 			else
 				printf(" %d", grades[i]);
+		}
+		printf("\n");
+	}
+	return 0;
+}
+```
+
+
+
+## 1080 Graduate Admission (30分)
+
+It is said that in 2011, there are about 100 graduate schools ready to proceed over 40,000 applications in Zhejiang Province. It would help a lot if you could write a program to automate the admission procedure.
+
+Each applicant will have to provide two grades: the national entrance exam grade *G**E*, and the interview grade *G**I*. The final grade of an applicant is (*G**E*+*G**I*)/2. The admission rules are:
+
+- The applicants are ranked according to their final grades, and will be admitted one by one from the top of the rank list.
+- If there is a tied final grade, the applicants will be ranked according to their national entrance exam grade *G**E*. If still tied, their ranks must be the same.
+- Each applicant may have *K* choices and the admission will be done according to his/her choices: if according to the rank list, it is one's turn to be admitted; and if the quota of one's most preferred shcool is not exceeded, then one will be admitted to this school, or one's other choices will be considered one by one in order. If one gets rejected by all of preferred schools, then this unfortunate applicant will be rejected.
+- If there is a tied rank, and if the corresponding applicants are applying to the same school, then that school must admit all the applicants with the same rank, **even if its quota will be exceeded**.
+
+### Input Specification:
+
+Each input file contains one test case.
+
+Each case starts with a line containing three positive integers: *N* (≤40,000), the total number of applicants; *M* (≤100), the total number of graduate schools; and *K* (≤5), the number of choices an applicant may have.
+
+In the next line, separated by a space, there are *M* positive integers. The *i*-th integer is the quota of the *i*-th graduate school respectively.
+
+Then *N* lines follow, each contains 2+*K* integers separated by a space. The first 2 integers are the applicant's *G**E* and *G**I*, respectively. The next *K* integers represent the preferred schools. For the sake of simplicity, we assume that the schools are numbered from 0 to *M*−1, and the applicants are numbered from 0 to *N*−1.
+
+### Output Specification:
+
+For each test case you should output the admission results for all the graduate schools. The results of each school must occupy a line, which contains the applicants' numbers that school admits. The numbers must be in increasing order and be separated by a space. There must be no extra space at the end of each line. If no applicant is admitted by a school, you must output an empty line correspondingly.
+
+### Sample Input:
+
+```in
+11 6 3
+2 1 2 2 2 3
+100 100 0 1 2
+60 60 2 3 5
+100 90 0 3 4
+90 100 1 2 0
+90 90 5 1 3
+80 90 1 0 2
+80 80 0 1 2
+80 80 0 1 2
+80 70 1 3 2
+70 80 1 2 3
+100 100 0 2 4
+```
+
+### Sample Output:
+
+```out
+0 10
+3
+5 6 7
+2 8
+
+1 4
+```
+
+### Expaining
+
+给出学校录取人数和学生分数及志愿，要求输出每个学校的录取结果，没有录取学生的空行
+
+排序规则：
+
+1 通过fi = （ge+gi）/2排序
+
+2 fi相同时，按照ge排序
+
+3 录取顺序必须遵循学生志愿，按照学生志愿依次寻找未录满的学校，（已录满的学校跟最后一名比排名，排名低于最后一名，不予录取）如果全部没有录上，则该考生落榜
+
+4 只要是排名相同，即使超额也要录取
+
+### Thinking
+
+结构体：学生id，ge，gi，pre[]
+
+school[]每个学校的上限
+
+比较函数:均分第一优先级，ge第二优先级
+
+### Code
+
+```c++
+
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+#include <map>
+using namespace std;
+struct stu
+{
+	int id;
+	int ge = 0;
+	int gi = 0;
+	vector<int> pre;
+};
+
+bool cmp(stu a, stu b)
+{
+	if ((a.ge + a.gi)  != (b.ge + b.gi) )
+		return (a.ge + a.gi)  > (b.ge + b.gi) ;
+	else
+		return a.ge > b.ge;
+}
+
+int main()
+{
+	int n, m, k;
+	scanf("%d %d %d", &n, &m, &k);
+	vector<int> sch_lim(m,0);
+	for (int i = 0; i < m; i++)
+	{
+		scanf("%d", &sch_lim[i]);
+	}
+	vector<stu> stus(n);
+	for (int i = 0; i < n; i++)
+	{
+		stus[i].id = i;
+		scanf("%d %d ", &stus[i].ge, &stus[i].gi);
+		stus[i].pre.resize(k);
+		for (int j = 0; j < k; j++)
+		{
+			scanf("%d", &stus[i].pre[j]);
+		}
+	}
+
+	map<int,vector<int> > sch_ind, sch_stu;//每个学校已录取的人数 index
+
+	sort(stus.begin(), stus.end(), cmp);
+	for (int i = 0; i < n; i++)
+	{
+		stu s = stus[i];
+		vector<int> p = s.pre;
+		for (int j = 0; j < k; j++)
+		{
+			int sch_id = p[j];
+			if (sch_id == 5)
+				sch_id;
+			vector<int>& adm = sch_ind[sch_id];
+			vector<int>& st = sch_stu[sch_id];
+			if (adm.size() < sch_lim[sch_id])
+			{
+				adm.push_back(i);
+				st.push_back(s.id);
+				break;
+			}
+			else
+			{ 
+				int stu_id = adm[adm.size() - 1];
+				stu ls = stus[stu_id];
+				if ((ls.ge + ls.gi)  == (s.ge + s.gi) 
+					&& ls.ge == s.ge)
+				{
+					adm.push_back(i);
+					st.push_back(s.id);
+					break;
+				}
+			}
+		}
+	}
+
+	for(int i = 0 ; i < m;i++)
+	{ 
+		vector<int> stu_id_list = sch_stu[i];
+		sort(stu_id_list.begin(), stu_id_list.end());
+		for (int i = 0; i < stu_id_list.size(); i++)
+		{
+			if(i != 0)
+				printf(" ");
+			printf("%d", stu_id_list[i]);
 		}
 		printf("\n");
 	}
