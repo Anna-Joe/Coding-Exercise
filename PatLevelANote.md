@@ -3063,3 +3063,166 @@ int main()
 }
 ```
 
+
+
+
+
+## 1062 Talent and Virtue (25分)
+
+About 900 years ago, a Chinese philosopher Sima Guang wrote a history book in which he talked about people's talent and virtue. According to his theory, a man being outstanding in both talent and virtue must be a "sage（圣人）"; being less excellent but with one's virtue outweighs talent can be called a "nobleman（君子）"; being good in neither is a "fool man（愚人）"; yet a fool man is better than a "small man（小人）" who prefers talent than virtue.
+
+Now given the grades of talent and virtue of a group of people, you are supposed to rank them according to Sima Guang's theory.
+
+### Input Specification:
+
+Each input file contains one test case. Each case first gives 3 positive integers in a line: *N* (≤10^5), the total number of people to be ranked; *L* (≥60), the lower bound of the qualified grades -- that is, only the ones whose grades of talent and virtue are both not below this line will be ranked; and *H* (<100), the higher line of qualification -- that is, those with both grades not below this line are considered as the "sages", and will be ranked in non-increasing order according to their total grades. Those with talent grades below *H* but virtue grades not are cosidered as the "noblemen", and are also ranked in non-increasing order according to their total grades, but they are listed after the "sages". Those with both grades below *H*, but with virtue not lower than talent are considered as the "fool men". They are ranked in the same way but after the "noblemen". The rest of people whose grades both pass the *L* line are ranked after the "fool men".
+
+Then *N* lines follow, each gives the information of a person in the format:
+
+```
+ID_Number Virtue_Grade Talent_Grade
+```
+
+where `ID_Number` is an 8-digit number, and both grades are integers in [0, 100]. All the numbers are separated by a space.
+
+### Output Specification:
+
+The first line of output must give *M* (≤*N*), the total number of people that are actually ranked. Then *M* lines follow, each gives the information of a person in the same format as the input, according to the ranking rules. If there is a tie of the total grade, they must be ranked with respect to their virtue grades in non-increasing order. If there is still a tie, then output in increasing order of their ID's.
+
+### Sample Input:
+
+```in
+14 60 80
+10000001 64 90
+10000002 90 60
+10000011 85 80
+10000003 85 80
+10000004 80 85
+10000005 82 77
+10000006 83 76
+10000007 90 78
+10000008 75 79
+10000009 59 90
+10000010 88 45
+10000012 80 100
+10000013 90 99
+10000014 66 60
+```
+
+### Sample Output:
+
+```out
+12
+10000013 90 99
+10000012 80 100
+10000003 85 80
+10000011 85 80
+10000004 80 85
+10000007 90 78
+10000006 83 76
+10000005 82 77
+10000002 90 60
+10000014 66 60
+10000008 75 79
+10000001 64 90
+```
+
+### Explaining
+
+根据给出的下限和上限，对记录的道德分数和天赋分数排序，排序规则如下：
+
+1.德分和才分都超过下限，才参与排名
+
+2.德分和才分都超过上限的，认为是圣人，按照总分排序；
+
+3.才分低于上限，而德分高于上限的，认为是君子，按总分排序；
+
+4.才分德分都低于上限的，且德分**不**低于才分的，认为是愚者，按总分排序
+
+5.其他人排在愚者后面
+
+### Thinking
+
+结构体：长整型id，整型v_grade，整型t_grade，total
+
+排序函数：按总分排序，总分相同的按id排序，
+
+条件一在录入数据的时候可以使用，录入数据的时候分成四类
+
+对四个数组分别排序
+
+### Code
+
+```c++
+#pragma warning(disable:4996)
+
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct record
+{
+	int id;
+	int virtue;
+	int talent;
+	record()
+	{
+		id = 0;
+		virtue = 0;
+		talent = 0;
+	}
+};
+
+bool cmp(record a, record b)
+{
+	if (a.virtue + a.talent != b.virtue + b.talent)
+		return (a.virtue + a.talent) > (b.virtue + b.talent);
+	else if (a.virtue != b.virtue)
+		return a.virtue > b.virtue;
+	else
+		return a.id < b.id;
+}
+
+int main()
+{
+	int n, l, h;
+	scanf("%d %d %d", &n, &l, &h);
+	vector<record> r(n),r1,r2,r3,r4;
+
+	for (int i = 0; i < n; i++)
+	{
+		record tmp;
+		scanf("%d %d %d", &tmp.id, &tmp.virtue, &tmp.talent);
+		if (tmp.virtue < l || tmp.talent < l)
+			continue;
+		else if (tmp.virtue >= h && tmp.talent >= h)
+			r1.push_back(tmp);
+		else if (tmp.virtue >= h && tmp.talent < h)
+			r2.push_back(tmp);
+		else if (tmp.virtue < h && tmp.talent < h && tmp.virtue >= tmp.talent)
+			r3.push_back(tmp);
+		else
+			r4.push_back(tmp);
+
+	}
+
+	sort(r1.begin(), r1.end(), cmp);
+	sort(r2.begin(), r2.end(), cmp);
+	sort(r3.begin(), r3.end(), cmp);
+	sort(r4.begin(), r4.end(), cmp);
+
+	printf("%d\n", r1.size() + r2.size() + r3.size() + r4.size());
+	for (auto &it : r1)
+		printf("%08d %d %d\n", it.id, it.virtue, it.talent);
+	for (auto &it : r2)
+		printf("%08d %d %d\n", it.id, it.virtue, it.talent);
+	for (auto &it : r3)
+		printf("%08d %d %d\n", it.id, it.virtue, it.talent);
+	for (auto &it : r4)
+		printf("%08d %d %d\n", it.id, it.virtue, it.talent);
+	return 0;
+}
+```
+
