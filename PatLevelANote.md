@@ -3591,3 +3591,136 @@ int main()
 }
 ```
 
+
+
+## 1083 List Grades (25分)
+
+Given a list of *N* student records with name, ID and grade. You are supposed to sort the records with respect to the grade in non-increasing order, and output those student records of which the grades are in a given interval.
+
+### Input Specification:
+
+Each input file contains one test case. Each case is given in the following format:
+
+```
+N
+name[1] ID[1] grade[1]
+name[2] ID[2] grade[2]
+... ...
+name[N] ID[N] grade[N]
+grade1 grade2
+```
+
+where `name[i]` and `ID[i]` are strings of no more than 10 characters with no space, `grade[i]` is an integer in [0, 100], `grade1` and `grade2` are the boundaries of the grade's interval. It is guaranteed that all the grades are **distinct**.
+
+### Output Specification:
+
+For each test case you should output the student records of which the grades are in the given interval [`grade1`, `grade2`] and are in non-increasing order. Each student record occupies a line with the student's name and ID, separated by one space. If there is no student's grade in that interval, output `NONE` instead.
+
+### Sample Input 1:
+
+```in
+4
+Tom CS000001 59
+Joe Math990112 89
+Mike CS991301 100
+Mary EE990830 95
+60 100
+```
+
+### Sample Output 1:
+
+```out
+Mike CS991301
+Mary EE990830
+Joe Math990112
+```
+
+### Sample Input 2:
+
+```in
+2
+Jean AA980920 60
+Ann CS01 80
+90 95
+```
+
+### Sample Output 2:
+
+```out
+NONE
+```
+
+### Explaining
+
+将给出的成绩记录在给定的分数范围内排序，按顺序输出学生的名字和成绩id，如果没有分数在给定范围内，输出NONE
+
+### Thinking
+
+结构体：name:string;id:string; grade:int
+
+排序函数：根据分数排序，分数相同根据名字排序
+
+### Code
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct stu
+{
+	string name;
+	string id;
+	int grade;
+};
+
+bool cmp(stu a, stu b)
+{
+	if (a.grade != b.grade)
+		return a.grade > b.grade;
+}
+
+int main()
+{
+	int n = 0;
+	scanf("%d", &n);
+	vector<stu> stuRecs(n);
+	vector<stu> sortedRecs;
+	for(int i = 0; i < n; i++)
+	{ 
+		cin >> stuRecs[i].name >> stuRecs[i].id >> stuRecs[i].grade;
+	}
+
+	int low = 0, high = 0;
+	scanf("%d %d", &low,&high);
+
+
+	for (int i = 0; i < n; i++)
+	{
+		stu tmp = stuRecs[i];
+		if (tmp.grade <= high && tmp.grade >= low)
+		{
+			sortedRecs.push_back(tmp);
+		}
+	}
+
+	if (sortedRecs.empty())
+	{
+		printf("NONE");
+	}
+	else
+	{
+		sort(sortedRecs.begin(), sortedRecs.end(), cmp);
+		for (int i = 0; i < sortedRecs.size(); i++)
+		{
+			printf("%s %s\n", sortedRecs[i].name.c_str(), sortedRecs[i].id.c_str());
+		}
+	}
+
+	return 0;
+}
+```
+
