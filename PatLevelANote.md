@@ -3726,6 +3726,8 @@ int main()
 
 
 
+# STL的使用
+
 ## 1039 Course List for Student (25分)
 
 Zhejiang University has 40000 students and provides 2500 courses. Now given the student name lists of all the courses, you are supposed to output the registered course list for each student who comes for a query.
@@ -3823,6 +3825,358 @@ int main()
 			cout << " " << *iter;
 		}
 		cout << endl;
+	}
+	return 0;
+}
+```
+
+## 1022 Digital Library (30分)
+
+A Digital Library contains millions of books, stored according to their titles, authors, key words of their abstracts, publishers, and published years. Each book is assigned an unique 7-digit number as its ID. Given any query from a reader, you are supposed to output the resulting books, sorted in increasing order of their ID's.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive integer *N* (≤10^4) which is the total number of books. Then *N* blocks follow, each contains the information of a book in 6 lines:
+
+- Line #1: the 7-digit ID number;
+- Line #2: the book title -- a string of no more than 80 characters;
+- Line #3: the author -- a string of no more than 80 characters;
+- Line #4: the key words -- each word is a string of no more than 10 characters without any white space, and the keywords are separated by exactly one space;
+- Line #5: the publisher -- a string of no more than 80 characters;
+- Line #6: the published year -- a 4-digit number which is in the range [1000, 3000].
+
+It is assumed that each book belongs to one author only, and contains no more than 5 key words; there are no more than 1000 distinct key words in total; and there are no more than 1000 distinct publishers.
+
+After the book information, there is a line containing a positive integer *M* (≤1000) which is the number of user's search queries. Then *M* lines follow, each in one of the formats shown below:
+
+- 1: a book title
+- 2: name of an author
+- 3: a key word
+- 4: name of a publisher
+- 5: a 4-digit number representing the year
+
+### Output Specification:
+
+For each query, first print the original query in a line, then output the resulting book ID's in increasing order, each occupying a line. If no book is found, print `Not Found` instead.
+
+### Sample Input:
+
+```in
+3
+1111111
+The Testing Book
+Yue Chen
+test code debug sort keywords
+ZUCS Print
+2011
+3333333
+Another Testing Book
+Yue Chen
+test code sort keywords
+ZUCS Print2
+2012
+2222222
+The Testing Book
+CYLL
+keywords debug book
+ZUCS Print2
+2011
+6
+1: The Testing Book
+2: Yue Chen
+3: keywords
+4: ZUCS Print
+5: 2011
+3: blablabla
+```
+
+### Sample Output:
+
+```out
+1: The Testing Book
+1111111
+2222222
+2: Yue Chen
+1111111
+3333333
+3: keywords
+1111111
+2222222
+3333333
+4: ZUCS Print
+1111111
+5: 2011
+1111111
+2222222
+3: blablabla
+Not Found
+```
+
+### Explaning
+
+给出书籍的信息和查询关键词，输出查询到的书籍id
+
+书籍信息：
+
+id；标题；作者；关键字；出版社；出版年份
+
+查询词：
+
+1：书名
+
+2：作者
+
+3：关键字
+
+4：出版社
+
+5：出版年 4位
+
+### Thinking
+
+每条信息使用map<string,int>存储，输入搜索信息，即map的key
+
+- 使用set可以对id自动排序
+
+### Code
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <map>
+#include <set>
+
+using namespace std;
+int main()
+{
+	int n = 0;
+	scanf("%d\n", &n);
+
+	map<string, set<int>> t_map, a_map, k_map, p_map,y_map;
+	for (int i = 0; i < n; i++)
+	{
+		int id = 0;
+		string title, author, keywords, publisher, year;
+		scanf("%d\n", &id);
+		getline(cin, title);
+		getline(cin,author);
+		while (cin >> keywords)
+		{
+			k_map[keywords].insert(id);
+			char c = getchar();
+			if (c == '\n')break;
+		}
+		getline(cin,publisher);
+		getline(cin, year);
+
+		t_map[title].insert(id);
+		a_map[author].insert(id);
+		p_map[publisher].insert(id);
+		y_map[year].insert(id);
+	}
+
+	int m = 0;
+	cin >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int k = 0;
+		scanf("%d: ", &k);
+		string content;
+		getline(cin, content);
+
+		printf("%d: %s\n", k, content.c_str());
+		set<int> idV;
+		switch (k)
+		{
+		case 1:
+			idV = t_map[content];
+			break;
+		case 2:
+			idV = a_map[content];
+			break;
+		case 3:
+			idV = k_map[content];
+			break;
+		case 4:
+			idV = p_map[content];
+			break;
+		case 5:
+			idV = y_map[content];
+			break;
+		default:
+			break;
+		}
+
+		if (idV.empty())
+			printf("Not Found\n");
+		else
+		{
+			for (auto it = idV.begin(); it != idV.end(); it++)
+				printf("%07d\n", *it);
+		}
+
+
+	}
+	return 0;
+}
+```
+
+
+
+# 堆排序 
+
+## 1098 Insertion or Heap Sort (25分)
+
+According to Wikipedia:
+
+**Insertion sort** iterates, consuming one input element each repetition, and growing a sorted output list. Each iteration, insertion sort removes one element from the input data, finds the location it belongs within the sorted list, and inserts it there. It repeats until no input elements remain.
+
+**Heap sort** divides its input into a sorted and an unsorted region, and it iteratively shrinks the unsorted region by extracting the largest element and moving that to the sorted region. it involves the use of a heap data structure rather than a linear-time search to find the maximum.
+
+Now given the initial sequence of integers, together with a sequence which is a result of several iterations of some sorting method, can you tell which sorting method we are using?
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (≤100). Then in the next line, *N* integers are given as the initial sequence. The last line contains the partially sorted sequence of the *N* numbers. It is assumed that the target sequence is always ascending. All the numbers in a line are separated by a space.
+
+### Output Specification:
+
+For each test case, print in the first line either "Insertion Sort" or "Heap Sort" to indicate the method used to obtain the partial result. Then run this method for one more iteration and output in the second line the resulting sequence. It is guaranteed that the answer is unique for each test case. All the numbers in a line must be separated by a space, and there must be no extra space at the end of the line.
+
+### Sample Input 1:
+
+```in
+10
+3 1 2 8 7 5 9 4 6 0
+1 2 3 7 8 5 9 4 6 0
+```
+
+### Sample Output 1:
+
+```out
+Insertion Sort
+1 2 3 5 7 8 9 4 6 0
+```
+
+### Sample Input 2:
+
+```
+10
+3 1 2 8 7 5 9 4 6 0
+6 4 5 1 0 3 2 7 8 9
+```
+
+### Sample Output 2:
+
+```
+Heap Sort
+5 4 3 1 0 2 6 7 8 9
+```
+
+### Explaining
+
+给出两个序列，第一行是初始序列，第二行是经历一次排序后的序列。判断该序列使用的是何种排序方法。并且输出下一次排序的结果。
+
+### Thinking
+
+- **org**
+  - 写出两种排序方法的过程，对初始序列执行一次之后，比较两种排序的结果，与给出序列相同的为当前使用的排序方法，并且再执行一次这种排序方法。 
+
+- **after**
+
+  - 判别方法优化
+
+    - 判别两种排序方法不一定需要对初始序列进行排序，可以通过两种排序算法排序的特性进行判别：
+
+    - 对于插入排序，未排序的部分一定与原始序列相同
+    - 对于堆排序，未排序的部分不与原始序列相同
+
+  - 下一趟排序结果获取
+
+    - 已知上述两种特性之后，对于插入排序的下一趟排序结果，可以直接使用sort函数把下一个元素加入排序序列中；
+    - 而对于堆排序，需要把当前序列视为堆，进行孩子节点的位置调整
+
+  - 堆排序
+
+    - 交换首元素和右边起第一个比首元素小的值（记为p）
+    - 然后根据小根堆的思想调整从第一个元素到p-1
+      - 比较相邻元素，不断寻找最大的节点跟根节点比较交换，根节点最大则结束循环
+
+### Coding
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+
+void adjust(int b[], int low, int high)
+{
+	int i = low, j = i * 2;//i的左孩子节点序号为i*2
+	while (j <= high)
+	{
+		if (j + 1 <= high && b[j] < b[j + 1]) j++;
+		if (b[i] >= b[j])break;
+		swap(b[i], b[j]);
+		i = j;
+		j = i * 2;
+	}
+}
+
+void heapSort(int a[], int n)
+{
+	int i = n;
+	while (i > 2 && a[i] >= a[1])
+		i--;
+
+	swap(a[1], a[i]);
+
+	adjust(a, 1, i-1);
+}
+
+
+int main()
+{
+	int n = 0;
+	cin >> n;
+	int v1[101], v2[101];
+	for (int i = 1; i <= n; i++)
+		cin >> v1[i];
+	for (int i = 1; i <= n; i++)
+		cin >> v2[i];
+
+	int k = 2;
+	while (k <= n && v2[k] >= v2[k-1])
+		k++;
+
+	bool isH  = false;
+	for (int i = k; i <= n; i++)
+	{
+		if (v1[i] != v2[i])
+		{
+			cout << "Heap Sort" << endl;
+			isH = true;
+			break;
+		}
+	}
+	if (!isH)
+	{
+		cout << "Insertion Sort" << endl;
+		sort(v2, v2 + k + 1);
+		cout << v2[1];
+		for (int i = 2; i <= n; i++)
+			cout << " "<< v2[i];
+	}
+	else
+	{
+		heapSort(v2, n);
+		cout << v2[1];
+		for (int i = 2; i <= n; i++)
+			cout << " " << v2[i];
 	}
 	return 0;
 }
