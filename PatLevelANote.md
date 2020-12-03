@@ -4484,3 +4484,258 @@ int main() {
 }
 ```
 
+
+
+## 1052 Linked List Sorting (25分)
+
+A linked list consists of a series of structures, which are not necessarily adjacent in memory. We assume that each structure contains an integer `key` and a `Next` pointer to the next structure. Now given a linked list, you are supposed to sort the structures according to their key values in increasing order.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive *N* (<105) and an address of the head node, where *N* is the total number of nodes in memory and the address of a node is a 5-digit positive integer. NULL is represented by −1.
+
+Then *N* lines follow, each describes a node in the format:
+
+```
+Address Key Next
+```
+
+where `Address` is the address of the node in memory, `Key` is an integer in [−105,105], and `Next` is the address of the next node. It is guaranteed that all the keys are distinct and there is no cycle in the linked list starting from the head node.
+
+### Output Specification:
+
+For each test case, the output format is the same as that of the input, where *N* is the total number of nodes in the list and all the nodes must be sorted order.
+
+### Sample Input:
+
+```in
+5 00001
+11111 100 -1
+00001 0 22222
+33333 100000 11111
+12345 -1 33333
+22222 1000 12345
+```
+
+### Sample Output:
+
+```out
+5 12345
+12345 -1 00001
+00001 0 11111
+11111 100 22222
+22222 1000 33333
+33333 100000 -1
+```
+
+### Explaining
+
+对链表结构排序，并输出节点个数和起始地址，以及每个节点的内容
+
+### Thinking
+
+构建结构体数组，对结构体数组排序，并输出每个元素的地址
+
+- 注意不在链表里的节点（必须按照所给顺序遍历）
+- 注意不含节点的情况（k=0输出0 -1）
+
+### Code
+
+```c++
+#pragma warning(disable:4996)
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+struct node
+{
+	int pos;
+	int data;
+	int next;
+	int flag = 0;
+};
+
+node nodes[100001];
+
+bool cmp(node& a, node& b)
+{
+	if (a.flag == 1 && b.flag == 1)
+		return a.data < b.data;
+	else
+		return a.flag > b.flag;
+}
+int main()
+{
+	int k,start;
+	scanf("%d %d", &k, &start);
+	for (int i = 0; i < k; i++)
+	{
+		int pos, data, next;
+		scanf("%d %d %d", &pos, &data, &next);
+		nodes[pos].pos = pos;
+		nodes[pos].data = data;
+		nodes[pos].next = next;
+	}
+
+	int cnt = 0;
+	for (int i = start; i != -1; i = nodes[i].next)
+	{
+		nodes[i].flag = 1;
+		cnt++;
+	}
+	if(cnt == 0)
+		printf("0 -1\n");
+	else
+	{
+		sort(nodes, nodes + 100000, cmp);
+
+		printf("%d %05d\n", cnt, nodes[0].pos);
+		for (int i = 0; i < cnt; i++)
+		{
+			printf("%05d %d ", nodes[i].pos, nodes[i].data);
+			if (i + 1 < cnt)
+				printf("%05d\n", nodes[i + 1].pos);
+			else
+				printf("-1\n");
+		}
+
+	}
+	return 0;
+}
+```
+
+
+
+## 1074 Reversing Linked List (25分)
+
+Given a constant *K* and a singly linked list *L*, you are supposed to reverse the links of every *K* elements on *L*. For example, given *L* being 1→2→3→4→5→6, if *K*=3, then you must output 3→2→1→6→5→4; if *K*=4, you must output 4→3→2→1→5→6.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains the address of the first node, a positive *N* (≤105) which is the total number of nodes, and a positive *K* (≤*N*) which is the length of the sublist to be reversed. The address of a node is a 5-digit nonnegative integer, and NULL is represented by -1.
+
+Then *N* lines follow, each describes a node in the format:
+
+```
+Address Data Next
+```
+
+where `Address` is the position of the node, `Data` is an integer, and `Next` is the position of the next node.
+
+### Output Specification:
+
+For each case, output the resulting ordered linked list. Each node occupies a line, and is printed in the same format as in the input.
+
+### Sample Input:
+
+```in
+00100 6 4
+00000 4 99999
+00100 1 12309
+68237 6 -1
+33218 3 00000
+99999 5 68237
+12309 2 33218
+```
+
+### Sample Output:
+
+```out
+00000 4 33218
+33218 3 12309
+12309 2 00100
+00100 1 99999
+99999 5 68237
+68237 6 -1
+```
+
+### Explaining
+
+给出随机的链表序列，和反向的终点序号，输出反向以后的序列
+
+### Thinking
+
+- 1.给出链表的顺序序列 
+
+- 2.k个元素反向
+  - 从第一个元素开始，next修改为k+1的地址
+  - 第n个元素，next修改为n-1的地址
+- 3.输出反向以后的序列
+
+### Code
+
+```
+#pragma warning(disable:4996)
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	int pre;
+	int addr;
+	int data;
+	int next;
+};
+
+node nodes[100001];
+node sortedNodes[100001];
+int main()
+{
+	int s,n,k;
+	scanf("%d %d %d", &s, &n,&k);
+	for (int i = 0; i < n; i++)
+	{
+		int addr, data, next;
+		scanf("%d %d %d", &addr, &data, &next);
+		nodes[addr].addr = addr;
+		nodes[addr].data = data;
+		nodes[addr].next = next;
+		nodes[next].pre = addr;
+	}
+	int cnt = 2;//有效节点
+	int lastPos = s;
+	int newS = -1;
+	int last = -1;
+	for (int i = nodes[s].next; i != -1; i = nodes[i].next)//从第二个元素开始遍历
+	{
+		node tmp = nodes[i];
+
+		if (cnt <= k)
+		{
+			tmp.next = lastPos;
+			lastPos = tmp.addr;
+			sortedNodes[tmp.addr] = tmp;
+			if (cnt == k)
+				newS = i;
+		}
+		else if (cnt >= k+1)
+		{
+			if (cnt == k + 1)
+				tmp.next = -1;
+			else
+				tmp.next = tmp.pre;
+			sortedNodes[tmp.addr] = tmp;
+		}
+
+		cnt++;
+
+	}
+	nodes[s] = nodes[newS].addr;
+	sortedNodes[s] = nodes[s];
+
+	
+	for (int i = newS; i != -1; i = sortedNodes[i].next)
+	{
+		printf("%05d %d ", sortedNodes[i].addr, sortedNodes[i].data);
+		if (sortedNodes[i].next != -1)
+			printf("%05d\n", sortedNodes[i].next);
+		else
+			printf("-1");
+	}
+
+	return 0;
+}
+```
+
