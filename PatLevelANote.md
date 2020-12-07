@@ -4301,6 +4301,91 @@ int main()
 }
 ```
 
+## 1147 Heaps (30分)
+
+In computer science, a **heap** is a specialized tree-based data structure that satisfies the heap property: if P is a parent node of C, then the key (the value) of P is either greater than or equal to (in a max heap) or less than or equal to (in a min heap) the key of C. A common implementation of a heap is the binary heap, in which the tree is a complete binary tree. (Quoted from Wikipedia at https://en.wikipedia.org/wiki/Heap_(data_structure))
+
+Your job is to tell if a given complete binary tree is a heap.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives two positive integers: M (≤ 100), the number of trees to be tested; and N (1 < N ≤ 1,000), the number of keys in each tree, respectively. Then M lines follow, each contains N distinct integer keys (all in the range of **int**), which gives the level order traversal sequence of a complete binary tree.
+
+### Output Specification:
+
+For each given tree, print in a line `Max Heap` if it is a max heap, or `Min Heap` for a min heap, or `Not Heap` if it is not a heap at all. Then in the next line print the tree's postorder traversal sequence. All the numbers are separated by a space, and there must no extra space at the beginning or the end of the line.
+
+### Sample Input:
+
+```in
+3 8
+98 72 86 60 65 12 23 50
+8 38 25 58 52 82 70 60
+10 28 15 12 34 9 8 56
+```
+
+### Sample Output:
+
+```out
+Max Heap
+50 60 65 72 12 23 86 98
+Min Heap
+60 58 52 38 82 70 25 8
+Not Heap
+56 12 34 28 9 8 15 10
+```
+
+### Explaining
+
+判断给出的完全二叉树序列是大根堆还是小根堆或者什么都不是，并且输出这棵二叉树的后序遍历序列
+
+### Thinking
+
+大根堆和小根堆可以通过根节点和他的孩子节点的大小关系判断。后序遍历可以直接对层次序列做递归调用。
+
+### Coding
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+using namespace std;
+
+int a[1005], m, n;
+void postOrder(int index)
+{
+	if (index > n)return;
+	else
+	{
+		postOrder(index * 2);
+		postOrder(index * 2 + 1);
+		printf("%d%s", a[index],index == 1?"\n":" ");
+	}
+}
+int main()
+{
+	scanf("%d %d", &m, &n);
+	while (m--)
+	{
+		int minn = 1, maxn = 1;
+		for (int i = 1; i <= n; i++)scanf("%d", &a[i]);
+		for (int i = 2; i <= n; i++)
+		{
+			if (a[i] > a[i / 2])maxn = 0;
+			if (a[i] < a[i / 2])minn = 0;
+		}
+
+		if (maxn)printf("Max Heap\n");
+		else if (minn)printf("Min Heap\n");
+		else printf("Not Heap\n");
+		postOrder(1);
+	}
+	return 0;
+}
+```
+
+
+
 # 链表
 
 ## 1032 Sharing (25分)
@@ -4664,7 +4749,7 @@ For each case, output the resulting ordered linked list. Each node occupies a li
 
 ### Code
 
-```
+```c++
 #pragma warning(disable:4996)
 #include <iostream>
 #include <algorithm>
@@ -4735,6 +4820,123 @@ int main()
 			printf("-1");
 	}
 
+	return 0;
+}
+```
+
+
+
+## 1097 Deduplication on a Linked List (25分)
+
+Given a singly linked list *L* with integer keys, you are supposed to remove the nodes with duplicated absolute values of the keys. That is, for each value *K*, only the first node of which the value or absolute value of its key equals *K* will be kept. At the mean time, all the removed nodes must be kept in a separate list. For example, given *L* being 21→-15→-15→-7→15, you must output 21→-15→-7, and the removed list -15→15.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains the address of the first node, and a positive *N* (≤105) which is the total number of nodes. The address of a node is a 5-digit nonnegative integer, and NULL is represented by −1.
+
+Then *N* lines follow, each describes a node in the format:
+
+```
+Address Key Next
+```
+
+where `Address` is the position of the node, `Key` is an integer of which absolute value is no more than 104, and `Next` is the position of the next node.
+
+### Output Specification:
+
+For each case, output the resulting linked list first, then the removed list. Each node occupies a line, and is printed in the same format as in the input.
+
+### Sample Input:
+
+```in
+00100 5
+99999 -7 87654
+23854 -15 00000
+87654 15 -1
+00000 -15 99999
+00100 21 23854
+```
+
+### Sample Output:
+
+```out
+00100 21 23854
+23854 -15 99999
+99999 -7 -1
+00000 -15 87654
+87654 15 -1
+```
+
+### Explaining
+
+去掉链表中值相同或绝对值相同的节点
+
+### Thinking
+
+按照链表顺序遍历，遇到重复节点则加入删除列表
+
+### Coding
+
+```c++
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+struct node
+{
+	int pos;
+	int data;
+	int next = -1;
+	int index = 200000;
+};
+bool cmp(node& a,node& b)
+{
+	return a.index < b.index;
+}
+node list[100000];
+bool exist[100000] = { false };
+
+int main()
+{
+	int s, n;
+	scanf("%d %d", &s, &n);
+
+	for (int i = 0; i < n; i++)
+	{
+		int pos, data, next;
+		scanf("%d %d %d",&pos,&data,&next);
+		list[pos].pos = pos;
+		list[pos].data = data;
+		list[pos].next = next;
+	}
+	int cnt1 = 0,cnt2 = 0;
+	for (int i = s; i != -1; i = list[i].next)
+	{
+		if (!exist[abs(list[i].data)])
+		{
+			exist[abs(list[i].data)] = true;
+			list[i].index = cnt1++;
+		}
+		else
+		{
+			list[i].index = 100000 + cnt2;
+			cnt2++;
+		}
+	}
+	sort(list, list+ 100000, cmp);
+	int cnt = cnt1 + cnt2;
+	for (int i = 0; i < cnt;i++)
+	{
+		if (i != cnt1-1 && i != cnt-1)
+			printf("%05d %d %05d\n", list[i].pos, list[i].data, list[i + 1].pos);
+		else
+			printf("%05d %d -1\n", list[i].pos, list[i].data);
+	}
 	return 0;
 }
 ```
