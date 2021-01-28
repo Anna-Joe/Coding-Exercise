@@ -4145,6 +4145,142 @@ int main()
 
 
 
+## 1148 Werewolf - Simple Version (20分)
+
+Werewolf（狼人杀） is a game in which the players are partitioned into two parties: the werewolves and the human beings. Suppose that in a game,
+
+- player #1 said: "Player #2 is a werewolf.";
+- player #2 said: "Player #3 is a human.";
+- player #3 said: "Player #4 is a werewolf.";
+- player #4 said: "Player #5 is a human."; and
+- player #5 said: "Player #4 is a human.".
+
+Given that there were 2 werewolves among them, at least one but not all the werewolves were lying, and there were exactly 2 liars. Can you point out the werewolves?
+
+Now you are asked to solve a harder version of this problem: given that there were *N* players, with 2 werewolves among them, at least one but not all the werewolves were lying, and there were exactly 2 liars. You are supposed to point out the werewolves.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (5≤*N*≤100). Then *N* lines follow and the *i*-th line gives the statement of the *i*-th player (1≤*i*≤*N*), which is represented by the index of the player with a positive sign for a human and a negative sign for a werewolf.
+
+### Output Specification:
+
+If a solution exists, print in a line in ascending order the indices of the two werewolves. The numbers must be separated by exactly one space with no extra spaces at the beginning or the end of the line. If there are more than one solution, you must output the smallest solution sequence -- that is, for two sequences *A*=*a*[1],...,*a*[*M*] and *B*=*b*[1],...,*b*[*M*], if there exists 0≤*k*<*M* such that *a*[*i*]=*b*[*i*] (*i*≤*k*) and *a*[*k*+1]<*b*[*k*+1], then *A* is said to be smaller than *B*. In case there is no solution, simply print `No Solution`.
+
+### Sample Input 1:
+
+```in
+5
+-2
++3
+-4
++5
++4
+```
+
+### Sample Output 1:
+
+```out
+1 4
+```
+
+### Sample Input 2:
+
+```in
+6
++6
++3
++1
+-5
+-2
++4
+```
+
+### Sample Output 2 (the solution is not unique):
+
+```out
+1 5
+```
+
+### Sample Input 3:
+
+```in
+5
+-2
+-3
+-4
+-5
+-1
+```
+
+### Sample Output 3:
+
+```out
+No Solution
+```
+
+### Explaining
+
+狼人游戏规则：其中有两个是狼人，其余是好人。所有人的发言中，有两个人在说谎，说谎的一个是狼人，一个是好人(根据狼人至少有一个在说谎，但不会全部说谎得出）。
+
+序列模拟情况：给出游戏总人数，分别用数字代表每个人发言中涉及到的信息，符号标识身份好坏，数字表示成员编号。
+
+要求输出狼人的成员编号。
+
+### Thinking
+
+使用两个数组来存储两层逻辑信息，一个数组存储所有成员的身份（仅包含1和-1），另一个数组存储所有叙述信息（包含符号和编号）
+
+穷举所有狼人的排列，找出当前排列下的说谎者，说谎者数量为二且一个是好人一个是狼人的时候输出。
+
+说谎者的条件：此人的叙述 和 身份表中的信息不一致（乘积小于零视为不一致）
+
+### Coding
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+//两个数组分别控制 某人的身份 和 叙述的真假
+//数组V控制 叙述的真假 （符号标识好坏，数字标识成员编号）
+//数组a控制 成员的身份 （1标识好人，-1标识坏人）
+int main()
+{
+	int n;//成员人数
+	cin >> n;
+	vector<int> v(n+1);
+
+	for (int i = 1; i < n+1; i++)
+	{
+		cin >> v[i];
+	}
+	for (int i = 1; i < n+1; i++)
+	{
+		for (int j = i + 1; j < n+1; j++)
+		{
+			vector<int> a(n + 1, 1);//初始化n个1 默认都是好人
+			vector<int> liar;//谎话成员
+
+			a[i] = a[j] = -1;//ij标识狼人
+			for (int k = 1; k < n+1; k++)
+				if (v[k] * a[abs(v[k])] < 0)liar.push_back(k);
+			if (liar.size() == 2 && (a[liar[0]] + a[liar[1]] == 0))//当说谎成员为两人，并且一好一坏时 输出
+			{
+				cout << i << " " << j;
+				return 0;
+			}
+		}
+	}
+	cout << "No Solution";
+	return 0;
+}
+```
+
+
+
 # 堆排序 
 
 ## 1098 Insertion or Heap Sort (25分)
@@ -4380,6 +4516,142 @@ int main()
 		else printf("Not Heap\n");
 		postOrder(1);
 	}
+	return 0;
+}
+```
+
+
+
+## 1155 Heap Paths (30分)
+
+In computer science, a **heap** is a specialized tree-based data structure that satisfies the heap property: if P is a parent node of C, then the key (the value) of P is either greater than or equal to (in a max heap) or less than or equal to (in a min heap) the key of C. A common implementation of a heap is the binary heap, in which the tree is a complete binary tree. (Quoted from Wikipedia at https://en.wikipedia.org/wiki/Heap_(data_structure))
+
+One thing for sure is that all the keys along any path from the root to a leaf in a max/min heap must be in non-increasing/non-decreasing order.
+
+Your job is to check every path in a given complete binary tree, in order to tell if it is a heap or not.
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer *N* (1<*N*≤1,000), the number of keys in the tree. Then the next line contains *N* distinct integer keys (all in the range of **int**), which gives the level order traversal sequence of a complete binary tree.
+
+### Output Specification:
+
+For each given tree, first print all the paths from the root to the leaves. Each path occupies a line, with all the numbers separated by a space, and no extra space at the beginning or the end of the line. The paths must be printed in the following order: for each node in the tree, all the paths in its right subtree must be printed before those in its left subtree.
+
+Finally print in a line `Max Heap` if it is a max heap, or `Min Heap` for a min heap, or `Not Heap` if it is not a heap at all.
+
+### Sample Input 1:
+
+```in
+8
+98 72 86 60 65 12 23 50
+```
+
+### Sample Output 1:
+
+```out
+98 86 23
+98 86 12
+98 72 65
+98 72 60 50
+Max Heap
+```
+
+### Sample Input 2:
+
+```in
+8
+8 38 25 58 52 82 70 60
+```
+
+### Sample Output 2:
+
+```out
+8 25 70
+8 25 82
+8 38 52
+8 38 58 60
+Min Heap
+```
+
+### Sample Input 3:
+
+```in
+8
+10 28 15 12 34 9 8 56
+```
+
+### Sample Output 3:
+
+```out
+10 15 8
+10 15 9
+10 28 34
+10 28 12 56
+Not Heap
+```
+
+### Explaining
+
+给出一组序列，判断这组序列是大根堆还是小根堆，输出从根节点到每个叶子节点的路径
+
+### Thinking
+
+输出根节点到叶子节点的路径肯定使用深度优先，判断大根堆和小根堆就是判断根和后面子节点的大小。
+
+### Coding
+
+```c++
+#pragma warning(disable:4996)
+#include <iostream>
+#include <vector>
+
+using namespace std;
+vector<int> v;
+int  a[1009], n, isMin = 1, isMax = 1;
+
+void dfs(int index)
+{
+	if (index * 2 > n)
+	{
+		if (index <= n)
+		{
+			for (int i = 0; i < v.size(); i++)
+			{
+				printf("%d%s", v[i], i != v.size() - 1 ? " ": "\n");
+			}
+		}
+	}
+	else
+	{
+		v.push_back(a[index * 2 + 1]);//先遍历右孩子
+		dfs(index * 2 + 1);
+		v.pop_back();
+
+		v.push_back(a[index * 2]);//再遍历左孩子
+		dfs(index * 2);
+		v.pop_back();
+	}
+
+}
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+		scanf("%d", &a[i]);
+	v.push_back(a[1]);//遍历根节点
+	dfs(1);
+
+	for (int i = 2; i <= n; i++)
+	{
+		if (a[i / 2] > a[i]) isMin = 0;//孩子节点大于根节点
+		if (a[i / 2] < a[i])isMax = 0;//根节点大于孩子节点
+	}
+	if (isMin == 1)
+		printf("Min Heap");
+	else
+		printf("%s", isMax == 1 ? "Max Heap" : "Not Heap");
+
 	return 0;
 }
 ```
