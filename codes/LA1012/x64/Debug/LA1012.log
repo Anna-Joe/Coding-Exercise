@@ -1,0 +1,3 @@
+﻿  源.cpp
+C:\Users\MI\source\repos\LA1012\源.cpp(29): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+  LA1012.vcxproj -> C:\Users\MI\source\repos\PAT\x64\Debug\LA1012.exe
