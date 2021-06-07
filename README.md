@@ -5,3 +5,5 @@
 
 [PAT-A编程笔记](PatLvelANote.md)
 
+[LeetCode编程笔记](LeetCodeNotes.md)
+
