@@ -3,7 +3,7 @@
 
 [PAT-B编程笔记](PatLevelBNote.md)
 
-[PAT-A编程笔记](PatLvelANote.md)
+[PAT-A编程笔记](PatLevelANote.md)
 
 [LeetCode编程笔记](LeetCodeNotes.md)
 
