@@ -385,3 +385,51 @@ public:
     }
 };
 ```
+
+## [5. Longest Palindromic Substring](https://leetcode-cn.com/problems/longest-palindromic-substring/)
+
+Given a string `s`, return *the longest palindromic substring* in `s`.
+
+**Example 1:**
+
+```
+Input: s = "babad"
+Output: "bab"
+Note: "aba" is also a valid answer.
+```
+
+**Example 2:**
+
+```
+Input: s = "cbbd"
+Output: "bb"
+```
+
+**Example 3:**
+
+```
+Input: s = "a"
+Output: "a"
+```
+
+**Example 4:**
+
+```
+Input: s = "ac"
+Output: "a"
+```
+
+**Constraints:**
+
+- `1 <= s.length <= 1000`
+- `s` consist of only digits and English letters (lower-case and/or upper-case),
+
+### Thinking
+
+返回最长的回文子串？
+
+一个子串的反向等于子串本身
+
+一个字符是回文串，两个相同字符是回文串，三个字符需要首尾相同
+
+所以从简单的问题想起就是动态规划的思想 ，n个字符判断方法就是 首尾相同并且中间的字符是回文串
