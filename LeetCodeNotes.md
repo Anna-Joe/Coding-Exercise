@@ -237,3 +237,39 @@ public:
     }
 };
 ```
+
+```c++
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        if(s.empty())
+        {
+            return 0;
+        }
+        string sub;
+        sub = s[0];
+        int len = 1;
+        int i = 0;
+        int j = 1;
+        //按移动窗口的逻辑
+        //先移动窗口的右边 只要没有重复就一直右移，一旦有重复就左移
+        while(i < s.size() && j < s.size())
+        {
+            if(sub.find(s[j]) == string::npos)
+            {
+                sub += s[j];
+                ++j;
+            }
+            else
+            {
+                len = sub.size() > len? sub.size():len;   
+                ++i;
+                sub = s.substr(i,j-i);
+            }
+        }
+        len = sub.size() > len? sub.size():len;
+        return len;
+
+    }
+};
+```
