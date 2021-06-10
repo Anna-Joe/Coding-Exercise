@@ -237,6 +237,10 @@ public:
     }
 };
 ```
+### Reflection
+- 一直使用string自带的字符串搜索函数，试图改变sub子串的内容，遇到重复字符串，都从上一个相同字符的下一位开始重新取串，但是发现了许多不能满足的特殊用例
+- - 使用的搜索函数有 find_first_of，find_last_of。其中熟悉了find_last_of函数，并不是返回最后一个匹配子串的位置，而是从尾部开始寻找第一个不匹配子串的位置
+- 最后参考算法指导手册，写出下列移动窗口的逻辑（比自己想的要简单多了）
 
 ```c++
 class Solution {
@@ -269,6 +273,114 @@ public:
         }
         len = sub.size() > len? sub.size():len;
         return len;
+
+    }
+};
+```
+
+## [4. Median of Two Sorted Arrays](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)
+
+Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return **the median** of the two sorted arrays.
+
+The overall run time complexity should be `O(log (m+n))`.
+
+**Example 1:**
+```
+Input: nums1 = [1,3], nums2 = [2]
+Output: 2.00000
+Explanation: merged array = [1,2,3] and median is 2.
+```
+
+**Example 2:**
+```
+Input: nums1 = [1,2], nums2 = [3,4]
+Output: 2.50000
+Explanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
+```
+
+**Example 3:**
+```
+Input: nums1 = [0,0], nums2 = [0,0]
+Output: 0.00000
+```
+
+**Example 4:**
+```
+Input: nums1 = [], nums2 = [1]
+Output: 1.00000
+```
+
+**Example 5:**
+```
+Input: nums1 = [2], nums2 = []
+Output: 2.00000
+```
+
+**Constraints:**
+
+- `nums1.length == m`
+- `nums2.length == n`
+- `0 <= m <= 1000`
+- `0 <= n <= 1000`
+- `1 <= m + n <= 2000`
+- `-106 <= nums1[i], nums2[i] <= 106
+
+### Thinking
+输出两个已排序数组的中位数，中位数就是奇数个元素的最中间那个，或者偶数个元素中间两个数的平均数，如果只有一个数，那么这个数本身就是中位数。
+首先将两个数组合并为一个新数组，判断新数组的size是奇数还是偶数，如果是奇数就取首尾索引均值的那个数，如果是偶数就取首尾相加除二，和首尾相加除二加一。
+
+### Code
+```c++
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> sorted_nums;
+        int i = 0;
+        int j = 0;
+        while(i < nums1.size() && j< nums2.size())
+        {
+            if(nums1[i] < nums2[j])
+            {
+                sorted_nums.push_back(nums1[i]);
+                i++;
+            }
+            else
+            {
+                sorted_nums.push_back(nums2[j]);
+                j++;  
+            }            
+        }
+
+        while(i < nums1.size())
+        {
+            sorted_nums.push_back(nums1[i]);
+            i++;
+        }
+
+        while(j < nums2.size())
+        {
+            sorted_nums.push_back(nums2[j]);
+            j++;    
+        }
+
+        int count = sorted_nums.size();
+        if(count % 2 == 0)
+        {
+            int end = count-1;
+            int begin = 0;
+            int i1 = (end+begin)/2;
+            int i2 = i1+1;
+            double rs = (sorted_nums[i1] + sorted_nums[i2])/2.0;
+            return rs;
+        }
+        else
+        {
+            int end = count-1;
+            int begin = 0;
+            int i = (end+begin)/2;
+            double rs = sorted_nums[i];
+            return rs;
+        }
 
     }
 };
