@@ -385,6 +385,82 @@ public:
     }
 };
 ```
+- 根据题目所给的时间复杂度的要求 上述算法虽然能通过但其实是不合格的
+- 尝试使用下列二分法搜索 但是未能通过 理由是无法判断第二个数组的中线位置
+```c++
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) 
+    {
+        //固定搜索两个数组里面更小的那个
+        if(nums2.size() < nums1.size())
+        {
+            return findMedianSortedArrays(nums2,nums1);
+        }
+
+        int count = nums1.size()+nums2.size();
+        //定义两个数组的中线
+        //通过二分搜索 确定中线的位置
+        int l = 0,h = nums1.size()-1;
+        int ma = l + (h-l)/2;
+        int mb = (count-1)>>1 - ma;
+        while(l <= h)
+        {
+            //if(nums1[ma-1] <= nums2[mb] && nums1[mb-1] < nums2[ma] )
+            if(ma > 0 && nums1[ma-1] > nums2[mb])//左移
+            {
+                h = ma-1;               
+            }
+            else if(ma < nums1.size() && nums2[mb-1] > nums1[ma])//右移
+            {
+                l = ma+1;
+            }
+            else
+            {
+                break;
+            }
+            ma = (l+h)/2;
+            mb = (count-1)>>1 - ma;
+        }
+        
+        int mr = 0;
+        int ml = 0;
+        if(ma ==0 )
+        {
+            ml = nums2[mb-1];
+        }
+        else if(mb ==0 )
+        {
+            ml = nums1[ma-1];
+        }
+        else 
+        {
+            ml = nums1[ma-1] > nums2[mb-1] ? nums1[ma-1]:nums2[mb-1];
+        }
+
+        
+
+        if(count%2 == 1)
+        {
+            return ml;
+        }
+
+        if(ma == nums1.size()-1)
+        {
+            mr = nums2[mb];
+        }
+        else if(mb == nums2.size()-1)
+        {
+            mr = nums1[ma];
+        }
+        else 
+        {
+            mr = nums1[ma] < nums2[mb] ? nums1[ma]:nums2[mb];
+        }
+        return (mr+ml)/2.0;
+    }
+};
+```
 
 ## [5. Longest Palindromic Substring](https://leetcode-cn.com/problems/longest-palindromic-substring/)
 
