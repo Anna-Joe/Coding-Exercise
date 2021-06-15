@@ -771,3 +771,87 @@ public:
     }
 };
 ```
+
+## [9. Palindrome Number](https://leetcode-cn.com/problems/palindrome-number/)
+
+Given an integer `x`, return `true` if `x` is palindrome integer.
+
+An integer is a **palindrome** when it reads the same backward as forward. For example, `121` is palindrome while `123` is not.
+
+**Example 1:**
+
+```
+Input: x = 121
+Output: true
+```
+
+**Example 2:**
+
+```
+Input: x = -121
+Output: false
+Explanation: From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome.
+```
+
+**Example 3:**
+
+```
+Input: x = 10
+Output: false
+Explanation: Reads 01 from right to left. Therefore it is not a palindrome.
+```
+
+**Example 4:**
+
+```
+Input: x = -101
+Output: false
+```
+
+**Constraints:**
+
+- `-231 <= x <= 231 - 1`
+
+### Thinking
+
+判断反转前后的字符串是否相等
+
+### Coding
+
+- 使用string
+
+```c++
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        string s = to_string(x);
+        string t =s;
+        reverse(s.begin(),s.end());
+        return s == t;
+    }
+};
+```
+
+- 不使用string
+
+```c++
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if(x < 0)
+            return false;
+        long rem = 0, y = 0;
+        int quo = x;
+
+        //循环取余数的办法倒置这个数 再判断是否与原数相等
+        while(quo != 0)
+        {
+            rem = quo%10;//个位数
+            y = y*10+rem;
+            quo = quo/10;
+        }
+        return y==x;
+    }
+};
+```
+
