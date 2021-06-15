@@ -606,3 +606,96 @@ public:
     }  
 };
 ```
+
+## [6. ZigZag Conversion](https://leetcode-cn.com/problems/zigzag-conversion/)
+
+The string `"PAYPALISHIRING"` is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+
+```
+P   A   H   N
+A P L S I I G
+Y   I   R
+```
+
+And then read line by line: `"PAHNAPLSIIGYIR"`
+
+Write the code that will take a string and make this conversion given a number of rows:
+
+```
+string convert(string s, int numRows);
+```
+
+**Example 1:**
+
+```
+Input: s = "PAYPALISHIRING", numRows = 3
+Output: "PAHNAPLSIIGYIR"
+```
+
+**Example 2:**
+
+```
+Input: s = "PAYPALISHIRING", numRows = 4
+Output: "PINALSIGYAHRPI"
+Explanation:
+P     I    N
+A   L S  I G
+Y A   H R
+P     I
+```
+
+**Example 3:**
+
+```
+Input: s = "A", numRows = 1
+Output: "A"
+```
+
+**Constraints:**
+
+- `1 <= s.length <= 1000`
+- `s` consists of English letters (lower-case and upper-case), `','` and `'.'`.
+- `1 <= numRows <= 1000`
+
+### Thinking
+
+弯曲字符串。给出一个字符串从列开始遍历的序列和总行数，要求输出从行开始遍历的序列。
+
+找规律：
+
+### Coding
+
+```c++
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        //结果为偶数 按余数正序保存
+        //结果为奇数 按余数倒序保存
+        if(s.empty() || numRows < 1)return 0;
+        if(numRows == 1)return s;
+        vector<string> tmp(numRows);
+
+        for(int i = 0; i < s.size();i++)
+        {
+            int ans = i/(numRows-1);
+            int res = i%(numRows-1);
+            if(ans % 2 == 0)
+            {
+                tmp[res].push_back(s[i]);
+            }
+            else
+            {
+                tmp[numRows-res-1].push_back(s[i]);
+            }
+        }
+
+        string rs;
+        for(auto str:tmp)
+        {
+            rs += str;
+        }
+        return rs;
+    }
+};
+```
+
