@@ -433,3 +433,100 @@ Output: "a"
 一个字符是回文串，两个相同字符是回文串，三个字符需要首尾相同
 
 所以从简单的问题想起就是动态规划的思想 ，n个字符判断方法就是 首尾相同并且中间的字符是回文串
+- 中心扩散法
+```c++
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int len = 1;
+        string rs = s.substr(0,1);
+        for(int i = 0; i < s.size(); i++)
+        {
+            string sub1,sub2;           
+            sub1 = palindrome(s,i,i+1);                
+            sub2 = palindrome(s,i,i);
+
+            if(sub1.size() > sub2.size() && s[i] == s[i+1])
+            {
+                if(len < sub1.size())
+                {
+                    len = sub1.size();
+                    rs = sub1;
+                }
+            }
+            else
+            {
+                if(len < sub2.size())
+                {
+                    len = sub2.size();
+                    rs = sub2;
+                }
+            } 
+        }
+        return rs;
+    }
+
+    string palindrome(string s,int left,int right)
+    {
+        while(left >= 0 && right < s.size())
+        {
+            if(s[left] == s[right])
+            {
+                left--;
+                right++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return s.substr(left+1,right-left-1);
+    }
+    
+};
+```
+- 动态规划法
+```c++
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int n = s.size();
+        
+        if(s.empty())
+            return 0;
+        int len = 1;
+        string rs = s.substr(0,1);
+        //动态规划其实就是记录子串左右端点的过程
+        vector<vector<bool>> dp(n,vector<bool>(n,false));
+        for(int i = n-1;i >= 0;i--)
+        {
+            for(int j = i;j < n;j++)
+            {
+                //所有单个字母都是回文
+                if(i == j)
+                {
+                    dp[i][j] = true;
+                }
+                else if(j == i+1)
+                {
+                    dp[i][j] = (s[i] == s[j]);
+                }
+                else
+                {
+                    dp[i][j] = (s[i] == s[j]) && dp[i+1][j-1];
+                }
+                if(dp[i][j])
+                {
+                    if(j-i+1 > len)
+                    {
+                        len = j-i+1;
+                        rs = s.substr(i,j-i+1);
+                    }
+                }
+                
+            }
+        }
+        return rs;    
+    }  
+};
+```
