@@ -990,7 +990,7 @@ Output: 2
 求序列之间的序号差（底）与当前元素（高）的乘积（面积）最大值
 
 ### Coding
-
+- 局限（很多测试用例不能通过）
 ```c++
 class Solution {
 public:
@@ -1025,4 +1025,36 @@ public:
     }
 };
 ```
+- o(n^2)(最长的用例超时）
 
+- 双指针 可以通过 但是时间和空间数据不是很好
+```c++
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        //双指针
+        int i = 0;
+        int j = height.size()-1;
+        int max_a = 0;
+        while(i < j)
+        {
+            int s = j-i;
+            int h = height[i]<height[j]?height[i]:height[j];
+            if(s*h > max_a)
+            {
+                max_a = s*h;
+            }
+            if(height[i]<height[j])
+            {
+                ++i;
+            }
+            else
+            {
+                --j;
+            }
+        }
+
+    return max_a;
+    }
+};
+```
