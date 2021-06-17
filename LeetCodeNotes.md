@@ -916,4 +916,113 @@ Output: false
 正则表达式匹配，给出字符串s和正则表达式p，输出p是否是满足s的表达式。其中.表示任何字符，*表示前一个字符的重复
 
 ### Coding
+```c++
+class Solution{
+public:
+    bool isMatch(string s,string p)
+    {
+        if(p.empty())return s.empty();//处理空值的情况
+        
+        auto first_match = !s.empty() && (s[0] == p[0] || p[0] == '.');//判断第一个字符是否匹配
+        
+        //如果P串第一个字符是非确定项
+        if(p.length() >= 2 && p[1] == '*')
+        {
+            //s串是否与之后的p匹配（也就是认为p的第一个字符没有） 或者 s串的第一个字符已经匹配上 判断s串后半段是否与p匹配
+            return isMatch(s,p.substr(2)) || (first_match && isMatch(s.substr(1),p));
+        }
+        //如果p串第一个字符是确定项
+        else
+        {   
+            //直接判断第一字符和之后的串是否匹配
+            return first_match && isMatch(s.substr(1),p.substr(1));
+        }
+    }
+}
+```
+## [11. Container With Most Water](https://leetcode-cn.com/problems/container-with-most-water/)
+
+Given `n` non-negative integers `a1, a2, ..., an` , where each represents a point at coordinate `(i, ai)`. `n` vertical lines are drawn such that the two endpoints of the line `i` is at `(i, ai)` and `(i, 0)`. Find two lines, which, together with the x-axis forms a container, such that the container contains the most water.
+
+**Notice** that you may not slant the container.
+
+![](https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/uploads/2018/07/25/question_11.jpg)
+
+**Example 1:**
+
+```
+Input: height = [1,8,6,2,5,4,8,3,7]
+Output: 49
+Explanation: The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.
+```
+
+**Example 2:**
+
+```
+Input: height = [1,1]
+Output: 1
+```
+
+**Example 3:**
+
+```
+Input: height = [4,3,2,1,4]
+Output: 16
+```
+
+**Example 4:**
+
+```
+Input: height = [1,2,1]
+Output: 2
+```
+
+**Constraints:**
+
+- `n == height.length`
+- `2 <= n <= 105`
+- `0 <= height[i] <= 104`
+
+### Thinking
+
+已知每个柱子的高度，求两个柱子围成的最大面积。
+
+求序列之间的序号差（底）与当前元素（高）的乘积（面积）最大值
+
+### Coding
+
+```c++
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int max_h = height[0];
+        int max_h_index = 0;
+        //找出最高的柱子 和 他的下标
+        for(int i = 1;i < height.size();++i)
+        {
+            if(height[i] > max_h)
+            {
+                max_h = height[i];
+                max_h_index=i;
+            }
+        }
+
+        int max_a = 0;
+        //找出到最高的柱子 距离最长的点
+        for(int i = 0 ; i < height.size();++i)
+        {
+            if(i == max_h_index)
+                continue;
+            int h = height[i];
+            int s = abs(i-max_h_index);
+            if(h*s > max_a)
+            {
+                max_a = h*s;
+            }
+            
+        }
+        return max_a;
+    }
+};
+```
 
