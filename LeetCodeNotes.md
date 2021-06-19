@@ -1342,4 +1342,91 @@ public:
 };
 ```
 
+### [15. 3Sum](https://leetcode-cn.com/problems/3sum/)
+
+Given an integer array nums, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.
+
+Notice that the solution set must not contain duplicate triplets.
+
+**Example 1:**
+
+```
+Input: nums = [-1,0,1,2,-1,-4]
+Output: [[-1,-1,2],[-1,0,1]]
+```
+
+**Example 2:**
+
+```
+Input: nums = []
+Output: []
+```
+
+**Example 3:**
+
+```
+Input: nums = [0]
+Output: []
+```
+
+**Constraints:**
+
+- `0 <= nums.length <= 3000`
+- `-105 <= nums[i] <= 105`
+
+### Thinking
+
+返回一个序列中所有和为0的三元组
+
+和为0的三元组 的 特点：
+
+1.含有一个0，另外两个数必须互为相反数（符号相反绝对值相等）
+
+2.不含有0，其中两个数的和 与 另一个数互为相反数
+
+### Coding
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> vec_rs;
+        if(nums.size() < 3)
+            return vec_rs;
+        
+        vector<int> num_in;
+        for(int i = 0; i < nums.size();i++)
+        {
+            for(int j = i+1; j < nums.size();j++)
+            {
+                for(int k = j+1; k < nums.size();++k)
+                {
+                    if(nums[i] +nums[j] + nums[k] == 0 )
+                    {
+                        int count = 0;
+                        if(find(num_in.begin(),num_in.end(),nums[i]) != num_in.end())
+                            count++;
+                        if(find(num_in.begin(),num_in.end(),nums[j]) != num_in.end())
+                            count++;
+                        if(find(num_in.begin(),num_in.end(),nums[k]) != num_in.end())
+                            count++;
+
+                        if(count <= 1)
+                        {
+                            num_in.push_back(nums[i]);
+                            num_in.push_back(nums[j]);
+                            num_in.push_back(nums[k]);
+                            vec_rs.push_back({nums[i],nums[j],nums[k]});
+                        }
+                    }
+                              
+                }
+            }
+        }
+
+        return vec_rs;
+    }
+};
+```
+
 
