@@ -1257,4 +1257,89 @@ public:
 };
 ```
 
+## [14. Longest Common Prefix](https://leetcode-cn.com/problems/longest-common-prefix/)
+
+Write a function to find the longest common prefix string amongst an array of strings.
+
+If there is no common prefix, return an empty string `""`.
+
+ 
+
+**Example 1:**
+
+```
+Input: strs = ["flower","flow","flight"]
+Output: "fl"
+```
+
+**Example 2:**
+
+```
+Input: strs = ["dog","racecar","car"]
+Output: ""
+Explanation: There is no common prefix among the input strings.
+```
+
+**Constraints:**
+
+- `1 <= strs.length <= 200`
+- `0 <= strs[i].length <= 200`
+- `strs[i]` consists of only lower-case English letters.
+
+### Thinking
+
+获取字符串数组中，最长的前缀，如果没有则返回空
+
+从第一个字符开始，遍历数组里每个字符串，如果相同则遍历第二个字符串，遇到不同的则退出循环
+
+### Coding
+
+```c++
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if(strs.empty())
+            return "";
+        if(strs.size() == 1)
+            return strs[0];
+
+        string pre = strs[0].substr(0,1);
+        int min_len = 200;
+        for(auto str:strs)
+        {
+            if(str.substr(0,1) != pre)
+            {
+                return "";
+            }
+            min_len = min_len < str.size()?min_len:str.size();
+        }
+        
+        
+        for(int pos = 1; pos < min_len; pos++)
+        {
+            string tmp = strs[0].substr(pos,1);
+            int match = true;
+            for(int i = 1; i < strs.size(); i++)
+            {
+                if(tmp != strs[i].substr(pos,1))
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if(match)
+            {
+                pre+=tmp;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+    return pre;
+    }
+};
+```
+
 
