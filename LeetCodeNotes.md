@@ -1482,3 +1482,107 @@ public:
     }
 };
 ```
+## [16. 3Sum Closest](https://leetcode-cn.com/problems/3sum-closest/)
+
+Given an array `nums` of *n* integers and an integer `target`, find three integers in `nums` such that the sum is closest to `target`. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+**Example 1:**
+
+```
+Input: nums = [-1,2,1,-4], target = 1
+Output: 2
+Explanation: The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+```
+
+**Constraints:**
+
+- `3 <= nums.length <= 10^3`
+- `-10^3 <= nums[i] <= 10^3`
+- `-10^4 <= target <= 10^4`
+
+### Thinking
+
+找到一个序列中，三个数之和与目标值最接近的三个数
+
+查找一个序列中所有组合，计算所有组合的和与目标值的差值，选择差值最小的输出
+
+### Coding
+
+- 暴力解法
+
+```c++
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        if(nums.size() == 3)
+        {
+            return nums[0]+nums[1]+nums[2];
+        }
+        sort(nums.begin(),nums.end());
+        int n = nums.size(); 
+        int min = 10000;
+        for (int i = 0; i < n; ++i)
+		{
+			if (i > 0 && nums[i] == nums[i - 1])
+				continue;
+			for (int j = i + 1; j < n; ++j)
+			{
+				//if (j > 1 && nums[j] == nums[j - 1])
+					//continue;
+				for (int k = j + 1; k < n; ++k)
+				{
+					//if (k > 2 && nums[k] == nums[k - 1])
+						//continue;
+					int tmp = nums[i] + nums[j] + nums[k];
+					if (abs(tmp - target) <= abs(min - target))
+					{
+						min = tmp;
+					}
+				}
+			}
+
+		}
+        return min;
+
+    }
+};
+```
+
+- 双指针
+
+```c++
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        if(nums.size() == 3)
+        {
+            return nums[0]+nums[1]+nums[2];
+        }
+        sort(nums.begin(),nums.end());
+        int n = nums.size(); 
+        int min = 10000;
+        for(int i = 0; i < n; ++i)
+        {
+            if(i > 0 && nums[i] == nums[i-1])
+                continue;
+            int l = i+1;
+            int h = n-1;
+            while(l < h)
+            {
+                int tmp= nums[i] + nums[l] + nums[h];
+                if(abs(tmp - target) < abs(min-target))
+                {
+                    min = tmp;
+                }
+                if(tmp < target)l++;
+                else if(tmp > target)h--;
+                else return min;
+                
+            }
+        }
+        return min;
+
+    }
+};
+```
+
