@@ -1464,17 +1464,16 @@ public:
                 else if(nums[l] + nums[h] == -nums[i])
                 {
                     vec_rs.push_back({ nums[i],nums[l],nums[h] });
-					while (l < h && nums[l + 1] == nums[l])
-					{
-						l++;				
-					}
-					while (l < h  && nums[h - 1] == nums[h])
-					{
-						h--;
-
-					}
-					h--;
-					l++;
+		    while (l < h && nums[l + 1] == nums[l])
+		    {
+			l++;				
+		    }
+		    while (l < h  && nums[h - 1] == nums[h])
+		    {
+			h--;
+		    }
+		    h--;
+		    l++;
                 }
             }            
         }
