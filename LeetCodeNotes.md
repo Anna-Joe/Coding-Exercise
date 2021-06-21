@@ -1428,5 +1428,58 @@ public:
     }
 };
 ```
+- 正确解法
+```c++
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> vec_rs;
+        if(nums.size() < 3)
+            return vec_rs;
+        
+        sort(nums.begin(),nums.end());
+        int n = nums.size();
+        //固定一个数字的双指针法 从求三个数的和转化为求两个数的和
+        for(int i = 0; i < nums.size();i++)
+        {
+            //当第一个数大于0时，后面的数字已经不用计算
+            if(nums[i] > 0)
+                break;
 
+            if(i > 0 && nums[i] == nums[i-1])
+                continue;
 
+            int l = i+1;
+            int h = nums.size()-1;
+            while( l < h)
+            {
+                if(nums[l] + nums[h] > -nums[i])
+                {
+                    h--;
+                }
+                else if(nums[l] + nums[h] < -nums[i])
+                {
+                    l++;
+                }
+                else if(nums[l] + nums[h] == -nums[i])
+                {
+                    vec_rs.push_back({ nums[i],nums[l],nums[h] });
+					while (l < h && nums[l + 1] == nums[l])
+					{
+						l++;				
+					}
+					while (l < h  && nums[h - 1] == nums[h])
+					{
+						h--;
+
+					}
+					h--;
+					l++;
+                }
+            }            
+        }
+
+        return vec_rs;
+    }
+};
+```
