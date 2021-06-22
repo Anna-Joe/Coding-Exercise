@@ -1666,3 +1666,96 @@ public:
 };
 ```
 
+## [18. 4Sum](https://leetcode-cn.com/problems/4sum/)
+
+Given an array `nums` of `n` integers, return *an array of all the **unique** quadruplets* `[nums[a], nums[b], nums[c], nums[d]]` such that:
+
+- `0 <= a, b, c, d < n`
+- `a`, `b`, `c`, and `d` are **distinct**.
+- `nums[a] + nums[b] + nums[c] + nums[d] == target`
+
+You may return the answer in **any order**.
+
+**Example 1:**
+
+```
+Input: nums = [1,0,-1,0,-2,2], target = 0
+Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+```
+
+**Example 2:**
+
+```
+Input: nums = [2,2,2,2,2], target = 8
+Output: [[2,2,2,2]]
+```
+
+**Constraints:**
+
+- `1 <= nums.length <= 200`
+- `-109 <= nums[i] <= 109`
+- `-109 <= target <= 109`
+
+### Thinking
+
+返回和满足目标值的四个数字，数字不可重复
+
+求任意两个数的和，然后用目标值减去这两个数，差值不存在的保存在映射中，差值已存在的存进列表里
+
+### Coding
+
+- 行不通 后面和与前面和相同的数字组合会覆盖掉
+
+```c++
+class Solution 
+{
+    public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) 
+    {
+        vector<vector<int>> rs; 
+        int n = nums.size(); 
+        if(n < 4)
+            return rs;
+        if(n == 4 && nums[0]+nums[1]+nums[2]+nums[3] != target)
+            return rs;
+        string index;
+        map<int,pair<int,int>> mp;
+        for(int i = 0;i < n;++i)
+        {
+            for(int j = i+1;j<n;++j)
+            {
+                int sum = nums[i]+nums[j];
+                int dif = target - sum;
+                if(mp.find(dif) != mp.end())
+                {
+                    auto f = mp.find(dif);
+                    pair<int,int> p = f->second;
+                    int k = p.first;
+                    int l = p.second;
+
+                    vector<int> tmp;
+                    tmp.push_back(i);
+                    tmp.push_back(j);
+                    tmp.push_back(k);
+                    tmp.push_back(l);
+                    sort(tmp.begin(),tmp.end());
+                    string str = to_string(tmp[0])+to_string(tmp[1])+to_string(tmp[2])+to_string(tmp[3]);
+
+                    if(k != i && k != j && l != i && l != j && index.find(str) == string::npos)
+                    {
+                        rs.push_back({nums[i],nums[j],nums[k],nums[l]});
+                        index.append(str);
+                    }
+                        
+                }
+                else
+                {
+                    mp[sum] = pair<int,int>(i,j);
+                }
+            }
+        }
+        return rs;
+    }
+};
+```
+
