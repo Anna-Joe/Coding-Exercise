@@ -1586,3 +1586,83 @@ public:
 };
 ```
 
+## [17. Letter Combinations of a Phone Number](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
+
+Given a string containing digits from `2-9` inclusive, return all possible letter combinations that the number could represent. Return the answer in **any order**.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/original_images/17_telephone_keypad.png" alt="img10" style="zoom:33%;" />
+
+
+
+**Example 1:**
+
+```
+Input: digits = "23"
+Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+```
+
+**Example 2:**
+
+```
+Input: digits = ""
+Output: []
+```
+
+**Example 3:**
+
+```
+Input: digits = "2"
+Output: ["a","b","c"]
+```
+**Constraints:**
+
+- `0 <= digits.length <= 4`
+- `digits[i]` is a digit in the range `['2', '9']`.
+
+### Thinking
+
+获取输入数字代表的所有字母组合
+
+从第一个数字的第一个字母开始跟后面每个数字分别匹配
+
+### Coding
+
+```c++
+class Solution {
+public:
+    //使用映射存储数字和数字代表的字符
+    map<char,string> mp = {{'2',"abc"},{'3',"def"},{'4',"ghi"},{'5',"jkl"},{'6',"mno"},{'7',"pqrs"},{'8',"tuv"},{'9',"wxyz"}};
+    vector<string> rs;
+    string cur;//组合串 每个字母串其中一个字符的组合  
+    //一直存储上一个数字代表字母串的字符，直到digit的内容被取完（所有数字都被遍历）才将这个组合串推进结果列表
+    //深度优先遍历就是实现了 构思的时候想实现的从第一个数字的第一个字母开始跟后面每个数字分别匹配
+    vector<string> letterCombinations(string digits) {
+        if(!digits.size())
+            return rs;
+        
+        DFS(digits);
+        return rs;
+    }
+
+    void DFS(string digit)
+    {
+        if(!digit.size())//结束时 存入结果串
+            return rs.push_back(cur);
+        else
+        {
+            char num = digit[0];
+            string letter = mp[num];//取到字符
+            for(int i = 0; i < letter.size();++i)
+            {
+                cur.push_back(letter[i]);
+                DFS(digit.substr(1));
+                cur.pop_back();
+            }
+        }
+    }
+};
+```
+
