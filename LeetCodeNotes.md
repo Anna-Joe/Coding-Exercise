@@ -1848,4 +1848,139 @@ public:
     }
 };
 ```
+## [20. Valid Parentheses](https://leetcode-cn.com/problems/valid-parentheses/)
+
+Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+
+An input string is valid if:
+
+1. Open brackets must be closed by the same type of brackets.
+2. Open brackets must be closed in the correct order.
+
+ 
+
+**Example 1:**
+
+```
+Input: s = "()"
+Output: true
+```
+
+**Example 2:**
+
+```
+Input: s = "()[]{}"
+Output: true
+```
+
+**Example 3:**
+
+```
+Input: s = "(]"
+Output: false
+```
+
+**Example 4:**
+
+```
+Input: s = "([)]"
+Output: false
+```
+
+**Example 5:**
+
+```
+Input: s = "{[]}"
+Output: true
+```
+
+ 
+
+**Constraints:**
+
+- `1 <= s.length <= 104`
+- `s` consists of parentheses only `'()[]{}'`.
+
+### Thinking
+
+使用堆栈
+
+### Coding
+
+```c++
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> tk_ch;
+        for(auto c:s)
+        {
+            if(c == '(')
+            {
+                tk_ch.push(c);
+            }
+            else if(c == ')')
+            {
+                if(tk_ch.empty())
+                    return false;
+                else if(tk_ch.top() == '(')
+                    tk_ch.pop();
+                else
+                    return false;
+            }
+            else if(c == '{')
+            {
+                tk_ch.push(c);
+            }
+            else if(c == '}')
+            {
+                if(tk_ch.empty())
+                    return false;
+                else if(tk_ch.top() == '{')
+                    tk_ch.pop();
+                else
+                    return false;
+            }
+            else if(c == '[')
+            {
+                tk_ch.push(c);
+            }
+            else if(c == ']' )
+            {
+                if(tk_ch.empty())
+                    return false;
+                if(tk_ch.top() == '[')
+                    tk_ch.pop();
+                else
+                    return false;
+            }
+        }
+        if(tk_ch.empty())
+            return true;
+
+        return false;
+
+    }
+};
+```
+
+```c++
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<int> st;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == '(') st.push(')');
+            else if (s[i] == '{') st.push('}');
+            else if (s[i] == '[') st.push(']');
+            // 第三种情况：遍历字符串匹配的过程中，栈已经为空了，没有匹配的字符了，说明右括号没有找到对应的左括号 return false
+            // 第二种情况：遍历字符串匹配的过程中，发现栈里没有我们要匹配的字符。所以return false
+            else if (st.empty() || st.top() != s[i]) return false;
+            else st.pop(); // st.top() 与 s[i]相等，栈弹出元素
+        }
+        // 第一种情况：此时我们已经遍历完了字符串，但是栈不为空，说明有相应的左括号没有右括号来匹配，所以return false，否则就return true
+        return st.empty();
+    }
+};
+```
+
 
