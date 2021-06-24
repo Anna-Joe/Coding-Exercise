@@ -1759,3 +1759,93 @@ class Solution
 };
 ```
 
+## [19. Remove Nth Node From End of List](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
+
+Given the `head` of a linked list, remove the `nth` node from the end of the list and return its head.
+
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2020/10/03/remove_ex1.jpg)
+
+```
+Input: head = [1,2,3,4,5], n = 2
+Output: [1,2,3,5]
+```
+
+**Example 2:**
+
+```
+Input: head = [1], n = 1
+Output: []
+```
+
+**Example 3:**
+
+```
+Input: head = [1,2], n = 1
+Output: [1]
+```
+
+ 
+
+**Constraints:**
+
+- The number of nodes in the list is `sz`.
+- `1 <= sz <= 30`
+- `0 <= Node.val <= 100`
+- `1 <= n <= sz`
+
+ ### Thinking
+
+删除链表的倒数第N个节点
+
+先取到这个节点的位置，然后从列表中找到节点 移动节点的前后节点
+
+### Coding
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        //删除链表的倒数第N个节点
+        vector<ListNode*> vc_link;
+        ListNode* p = head;
+        while(p!=nullptr)
+        {
+            vc_link.push_back(p);
+            p = p->next;
+        }
+        int del_i = vc_link.size()-n;
+        
+        if(del_i == 0)
+        {
+            ListNode* q = head;
+            head = head->next;
+            q->next = nullptr;
+            delete q;
+        }
+        else
+        {
+            ListNode* q =  vc_link[del_i];
+            vc_link[del_i-1]->next = q->next;
+            q->next = nullptr;
+            delete q;
+        }
+
+        return head;
+
+    }
+};
+```
+
