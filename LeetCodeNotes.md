@@ -2201,4 +2201,79 @@ public:
     }
 };
 ```
+## [24. Swap Nodes in Pairs](https://leetcode-cn.com/problems/swap-nodes-in-pairs/)
+
+Given a linked list, swap every two adjacent nodes and return its head. You must solve the problem without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)
+
+ 
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2020/10/03/swap_ex1.jpg)
+
+```
+Input: head = [1,2,3,4]
+Output: [2,1,4,3]
+```
+
+**Example 2:**
+
+```
+Input: head = []
+Output: []
+```
+
+**Example 3:**
+
+```
+Input: head = [1]
+Output: [1]
+```
+
+ 
+
+**Constraints:**
+
+- The number of nodes in the list is in the range `[0, 100]`.
+- `0 <= Node.val <= 100`
+
+### Thinking
+
+交换相邻的两个节点
+
+### Coding
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        //第一步 整体化分解问题 可递归解决的问题 一定是重复一个操作的问题
+        //把这个重复操作 分解为已操作的部分+重复的最小单元 这个已操作部分往往就是递归的入口
+        //比如 链表交换问题的最小单元 就是三个节点，当前节点的前驱，当前节点，和当前节点的后继。
+        //交换操作 是 使当前节点的后指针指向前驱，前驱节点的后指针指向当前节点的后继
+        //其中当前节点的后继应该是已操作部分 也就是递归入口
+        //终止条件 链表为空
+        //返回值 返回已反转的链表
+        //本级应该做什么 反转开头两个节点
+        //链表和树是天生适合递归的结构
+        if(head == nullptr || head->next == nullptr)
+            return head;
+        ListNode* next = head->next;
+        head->next = swapPairs(next->next);
+        next->next = head;
+        return next;
+    }
+};
+```
+
 
