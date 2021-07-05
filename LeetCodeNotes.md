@@ -2522,4 +2522,77 @@ public:
     }
 };
 ```
+## [32. Longest Valid Parentheses](https://leetcode-cn.com/problems/longest-valid-parentheses/)
+
+Given a string containing just the characters `'('` and `')'`, find the length of the longest valid (well-formed) parentheses substring.
+
+ 
+
+**Example 1:**
+
+```
+Input: s = "(()"
+Output: 2
+Explanation: The longest valid parentheses substring is "()".
+```
+
+**Example 2:**
+
+```
+Input: s = ")()())"
+Output: 4
+Explanation: The longest valid parentheses substring is "()()".
+```
+
+**Example 3:**
+
+```
+Input: s = ""
+Output: 0
+```
+
+ 
+
+**Constraints:**
+
+- `0 <= s.length <= 3 * 104`
+- `s[i]` is `'('`, or `')'`.
+
+### Thinking
+
+
+
+### Coding
+
+```c++
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+		int len = s.length();
+		if(len < 2) return 0;
+        vector<int> dp(len,0);
+        int max = 0;
+        for(int i = 1 ; i < len;++i)
+        {
+            if(s[i] == ')')
+            {
+                int pre = i - dp[i-1]-1;
+                if(pre >= 0 && s[pre] == '(')
+                {
+                    dp[i] = dp[i-1]+2;
+                    if(pre>0)
+                    {
+                        dp[i] += dp[pre-1];
+                        
+                    }
+                    if(dp[i] > max)
+                        max = dp[i];
+                }
+            }
+        }
+        return max;
+    }
+};
+```
+
 
