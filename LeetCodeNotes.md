@@ -2719,3 +2719,123 @@ public:
 ```
 
 
+## [25. Reverse Nodes in k-Group](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
+
+Given a linked list, reverse the nodes of a linked list *k* at a time and return its modified list.
+
+*k* is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of *k* then left-out nodes, in the end, should remain as it is.
+
+You may not alter the values in the list's nodes, only nodes themselves may be changed.
+
+ 
+
+**Example 1:**
+
+![img](https://assets.leetcode.com/uploads/2020/10/03/reverse_ex1.jpg)
+
+```
+Input: head = [1,2,3,4,5], k = 2
+Output: [2,1,4,3,5]
+```
+
+**Example 2:**
+
+![img](https://assets.leetcode.com/uploads/2020/10/03/reverse_ex2.jpg)
+
+```
+Input: head = [1,2,3,4,5], k = 3
+Output: [3,2,1,4,5]
+```
+
+**Example 3:**
+
+```
+Input: head = [1,2,3,4,5], k = 1
+Output: [1,2,3,4,5]
+```
+
+**Example 4:**
+
+```
+Input: head = [1], k = 1
+Output: [1]
+```
+
+ 
+
+**Constraints:**
+
+- The number of nodes in the list is in the range `sz`.
+- `1 <= sz <= 5000`
+- `0 <= Node.val <= 1000`
+- `1 <= k <= sz`
+
+### Thinking
+
+使用临时链表存储反转以后的短链。
+
+使用结果链表连接所有短链。
+
+### Coding
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        //计算链表的长度
+        //计算反转的次数
+        //遍历逐级反转
+        //用一个空链表 遍历已知链表 每次反转的部分 都插入在空链表的头部，反转长度结束后 从尾部开始
+        int n = 0;
+        ListNode* p = head;
+        while(p!= nullptr)
+        {
+            n++;
+            p = p->next;
+        }
+        p = new ListNode(0);
+        ListNode* rs = new ListNode(0);
+        ListNode* pr = rs;
+        ListNode* cur = head;
+        ListNode* nex = head->next;
+        for(int i = 0; i < n/k;++i)
+        {
+            ListNode* tmp = new ListNode(0);
+            tmp->val = cur->val;
+            cur = cur->next;
+            ListNode* pt = tmp;
+            for(int j = 1;j < k;++j)
+            { 
+                nex = cur->next;
+                cur->next = pt;                
+                pt = cur;
+                cur = nex;
+            }
+            pr->next = pt;
+            int t = k;
+            while(t>0)
+            {
+                pr = pr->next;
+                t--;
+            }
+        }
+        
+        if(cur != nullptr)
+        {
+            pr->next = cur;
+        }
+        return rs->next;
+    }
+};
+```
+
